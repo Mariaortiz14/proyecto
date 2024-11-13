@@ -50,8 +50,8 @@ export default {
         });
 
         if (response.data.message === 'Inicio de sesión exitoso') {
-          localStorage.setItem('userName', this.username); // Guardar el nombre en localStorage
-          this.$router.push('/home'); // Redirigir a Home
+          localStorage.setItem('userName', this.username); 
+          this.$router.push('/home'); 
         }
       } catch (error) {
         this.errorMessage = 'Usuario o contraseña incorrectos';

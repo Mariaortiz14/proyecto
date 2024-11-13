@@ -5,9 +5,10 @@
       <nav>
         <ul>
           <li><router-link to="/">Inicio</router-link></li>
+          <li><router-link to="/edit-profile">ver perfil</router-link></li>
           <li><router-link to="/events">Eventos</router-link></li>
           <li><router-link to="/login">Iniciar sesión</router-link></li>
-          <li><router-link to="/register">Registrarse</router-link></li>
+          <li><router-link to="/regiter">Registrarse</router-link></li>
         </ul>
       </nav>
     </div>

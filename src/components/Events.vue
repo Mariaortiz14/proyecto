@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1>Eventos</h1>
+      <h1> Tus Eventos: </h1>
       <ul>
         <li v-for="event in events" :key="event.id">
           {{ event.name }} - {{ event.date }}
@@ -14,6 +14,20 @@
     data() {
       return {
         events: [
+          { id: 1, name: "Evento 1", date: "2024-09-15" },
+          { id: 2, name: "Evento 2", date: "2024-10-01" },
+          { id: 1, name: "Evento 1", date: "2024-09-15" },
+          { id: 2, name: "Evento 2", date: "2024-10-01" },
+          { id: 1, name: "Evento 1", date: "2024-09-15" },
+          { id: 2, name: "Evento 2", date: "2024-10-01" },
+          { id: 1, name: "Evento 1", date: "2024-09-15" },
+          { id: 2, name: "Evento 2", date: "2024-10-01" },
+          { id: 1, name: "Evento 1", date: "2024-09-15" },
+          { id: 2, name: "Evento 2", date: "2024-10-01" },
+          { id: 1, name: "Evento 1", date: "2024-09-15" },
+          { id: 2, name: "Evento 2", date: "2024-10-01" },
+          { id: 1, name: "Evento 1", date: "2024-09-15" },
+          { id: 2, name: "Evento 2", date: "2024-10-01" },
           { id: 1, name: "Evento 1", date: "2024-09-15" },
           { id: 2, name: "Evento 2", date: "2024-10-01" },
         ],
