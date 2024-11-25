@@ -25,7 +25,7 @@
 
 <script>
 import axios from "axios";
-import Swal from "sweetalert2"; // Importa SweetAlert2
+import Swal from "sweetalert2"; 
 
 export default {
   data() {
@@ -40,7 +40,6 @@ export default {
     async createEvent() {
       const userId = localStorage.getItem("user_id");
 
-      // Verifica que user_id esté presente
       if (!userId) {
         Swal.fire({
           icon: 'error',
@@ -49,8 +48,6 @@ export default {
         });
         return;
       }
-
-      // Verifica los datos antes de enviarlos
       console.log({
         user_id: userId,  
         title: this.title,
@@ -61,26 +58,21 @@ export default {
 
       try {
         const response = await axios.post("http://localhost:8000/events/", {
-          user_id: userId,  // Usamos el user_id obtenido de localStorage
-          title: this.title,
+          user_id: userId,  
           description: this.description,
           event_date: this.event_date,
-          image_url: this.image_url,  // El campo location se ha eliminado
+          image_url: this.image_url,  
         });
 
-        // Muestra alerta de éxito con SweetAlert2
         Swal.fire({
           icon: 'success',
           title: 'Evento creado con éxito',
           text: 'Tu evento se ha creado correctamente',
         });
 
-        // Redirige al usuario a la página de mis eventos
         this.$router.push("/my-events");
       } catch (error) {
-        console.error("Error al crear el evento:", error.response || error); // Mostrar el error detallado
-
-        // Muestra alerta de error con SweetAlert2
+        console.error("Error al crear el evento:", error.response || error); 
         Swal.fire({
           icon: 'error',
           title: 'Hubo un error',
@@ -92,10 +84,7 @@ export default {
 };
 </script>
 
-
-
-
-  <style>
+<style>
   .event-form {
     padding: 20px;
     max-width: 600px;

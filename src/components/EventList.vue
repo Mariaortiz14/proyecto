@@ -15,7 +15,7 @@
 export default {
   name: 'EventList',
   props: {
-    events: Array // Espera una lista de eventos como propiedad
+    events: Array 
   }
 };
 </script>

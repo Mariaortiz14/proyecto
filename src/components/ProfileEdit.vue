@@ -3,7 +3,6 @@
     <div class="edit-profile">
       <h1>Editar Perfil</h1>
 
-      <!-- Imagen de perfil -->
       <div class="profile-image">
         <img :src="imageUrl || defaultProfileImage" alt="Foto de perfil" />
         <label for="profile-image" class="upload-label">Cambiar Foto</label>
@@ -17,7 +16,6 @@
       </div>
 
       <form @submit.prevent="submitForm">
-        <!-- Información Personal -->
         <section class="section">
           <h2>Información Personal</h2>
           <div class="form-group">
@@ -52,7 +50,6 @@
           </div>
         </section>
 
-        <!-- Cambiar Contraseña -->
         <section class="section">
           <h2>Cambiar Contraseña</h2>
           <div class="form-group">
@@ -84,7 +81,6 @@
           </div>
         </section>
 
-        <!-- Botones de acción -->
         <div class="actions">
           <button type="submit" class="btn-primary">Guardar Cambios</button>
           <button type="button" class="btn-secondary" @click="resetForm">
@@ -113,7 +109,7 @@ export default {
         image: null,
       },
       imageUrl: null,
-      defaultProfileImage: "src/assets/perfil-por-defecto.png", // Imagen de perfil por defecto
+      defaultProfileImage: "src/assets/perfil-por-defecto.png", 
     };
   },
   mounted() {
@@ -178,7 +174,7 @@ export default {
 
     if (response.ok) {
       Swal.fire("Éxito", "Perfil actualizado correctamente.", "success");
-      this.loadUserProfile(); // Recargar los datos del perfil actualizado
+      this.loadUserProfile(); 
     } else {
       Swal.fire(
         "Error",
@@ -192,13 +188,13 @@ export default {
   }
 },
     resetForm() {
-      this.loadUserProfile(); // Reinicia los datos a su estado original
+      this.loadUserProfile(); 
     },
     handleImageUpload(event) {
       const file = event.target.files[0];
       if (file) {
         this.profile.image = file;
-        this.imageUrl = URL.createObjectURL(file); // Mostrar vista previa
+        this.imageUrl = URL.createObjectURL(file);
       }
     },
   },
@@ -332,7 +328,6 @@ input:focus {
   background-color: #5a6268;
 }
 
-/* Sección de los datos */
 .profile-info {
   display: flex;
   flex-wrap: wrap;
@@ -341,7 +336,7 @@ input:focus {
 }
 
 .profile-info .form-group {
-  flex: 1 1 45%; /* Cada input ocupa el 45% del ancho */
+  flex: 1 1 45%; 
   margin-right: 30px;
   margin-bottom: 20px;
 }
@@ -357,7 +352,7 @@ input:focus {
 
 @media (max-width: 768px) {
   .profile-info .form-group {
-    flex: 1 1 100%; /* En pantallas pequeñas, cada campo ocupa el 100% */
+    flex: 1 1 100%; 
     margin-right: 0;
   }
 

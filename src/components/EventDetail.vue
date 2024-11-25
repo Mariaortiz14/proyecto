@@ -23,20 +23,20 @@ export default {
   name: "EventDetail",
   data() {
     return {
-      event: null, // Aquí se almacenan los datos del evento
-      error: null, // Manejo de errores si algo falla
+      event: null, 
+      error: null, 
     };
   },
   methods: {
     async fetchEvent() {
       try {
-        const eventId = this.$route.params.id; // Obtener el ID del evento desde la URL
+        const eventId = this.$route.params.id; 
         if (!eventId) {
           this.error = "No se proporcionó un ID de evento válido.";
           return;
         }
         const response = await axios.get(`http://localhost:8000/events/${eventId}`);
-        this.event = response.data; // Guardar los datos del evento
+        this.event = response.data; 
       } catch (error) {
         console.error("Error al cargar los detalles del evento:", error);
         this.error = "Hubo un problema al cargar los detalles del evento.";
@@ -55,7 +55,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchEvent(); // Cargar los detalles del evento al montar el componente
+    this.fetchEvent(); 
   },
 };
 </script>

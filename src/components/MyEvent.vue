@@ -1,14 +1,11 @@
 <template>
   <div class="my-events">
     <h1>Mis Eventos</h1>
-    <!-- Agregar botón para crear evento -->
     <router-link to="/create-event">
       <button class="btn-create-event">Crear Nuevo Evento</button>
     </router-link>
 
-    <!-- Mostrar los eventos del usuario -->
     <div v-if="events.length > 0" class="event-cards-container">
-      <!-- Mostrar eventos en tarjetas, uno al lado del otro -->
       <div v-for="event in events" :key="event.id" class="event-card">
         <h3>{{ event.title }}</h3>
         <p><strong>Fecha:</strong> {{ formatDate(event.event_date) }}</p>
@@ -31,11 +28,11 @@ export default {
   name: "MyEvent",
   data() {
     return {
-      events: [], // Lista de eventos
+      events: [], 
     };
   },
   mounted() {
-    this.loadUserEvents(); // Cargar eventos al montar
+    this.loadUserEvents(); 
   },
   methods: {
     async loadUserEvents() {
@@ -48,7 +45,7 @@ export default {
 
       try {
         const response = await axios.get(`http://localhost:8000/users/${userId}/events/`);
-        console.log("Eventos recibidos:", response.data); // Verificar los datos
+        console.log("Eventos recibidos:", response.data); 
         this.events = response.data;
       } catch (error) {
         console.error("Error al cargar los eventos:", error);
@@ -56,7 +53,7 @@ export default {
       }
     },
     formatDate(date) {
-      if (!date) return "Fecha no disponible"; // Validar si existe una fecha
+      if (!date) return "Fecha no disponible";
 
       const options = { 
         year: "numeric", 
@@ -100,21 +97,20 @@ background: linear-gradient(0deg, rgba(77,77,77,1) 0%, rgba(140,168,255,1) 19%, 
   background-color: #9815ee;
 }
 
-/* Contenedor para los eventos, usa Flexbox para distribuir los elementos en fila */
+
 .event-cards-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around; /* Distribuye los elementos en todo el espacio disponible */
-  gap: 20px; /* Espacio entre las tarjetas */
+  justify-content: space-around; 
+  gap: 20px; 
 }
 
-/* Estilo para cada tarjeta de evento */
 .event-card {
   border: 1px solid #ccc;
   padding: 20px;
   border-radius: 8px;
   background-color: #f9f9f9;
-  width: 200px; /* Tamaño fijo para las tarjetas */
+  width: 200px;
   flex-grow: 1;
   transition: transform 0.3s ease-in-out;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

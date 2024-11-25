@@ -44,13 +44,13 @@ export default {
     return {
       username: '',
       password: '',
-      showPassword: false, // Estado para alternar la visibilidad de la contraseña
+      showPassword: false,
       errorMessage: ''
     };
   },
   methods: {
     togglePasswordVisibility() {
-      this.showPassword = !this.showPassword; // Alterna entre mostrar/ocultar la contraseña
+      this.showPassword = !this.showPassword; 
     },
     async loginUser() {
       try {
@@ -103,13 +103,13 @@ html, body {
 }
 
 .form-container {
-  max-width: 500px; /* Aumentado para que las barras no se salgan */
+  max-width: 500px; 
   padding: 40px;
   border-radius: 12px;
   background-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   text-align: center;
-  width: 90%; /* Se adapta al ancho de la pantalla */
+  width: 90%; 
 }
 
 .login-form {
@@ -124,7 +124,7 @@ html, body {
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.3s;
-  width: 95%; /* Asegura que no se salga del contenedor */
+  width: 95%; 
 }
 
 .input-field:focus {

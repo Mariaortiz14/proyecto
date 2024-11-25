@@ -11,11 +11,10 @@
 export default {
   name: 'EventCard',
   props: {
-    event: Object // Recibe un evento individual
+    event: Object
   },
   methods: {
     goToEventDetail() {
-      // Navegar a la página de detalle del evento cuando se hace clic
       this.$router.push(`/events/${this.event.id}`);
     },
     formatDate(date) {

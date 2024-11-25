@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/components/Login.vue';
 import LandingPage from '@/components/LandingPage.vue';
-import Home from '@/components/Home.vue';
 import Register from '@/components/Register.vue';
 import EventList from '@/components/EventList.vue';
 import Calendar from '@/components/Calendar.vue';
@@ -22,15 +21,10 @@ const routes = [
     component: Login 
   },
   {
-    path: '/home',
-    name: 'Home',
-    component: Home
-  },
-  {
     path: '/register',
     component: () => import('../components/Register.vue'),
     beforeEnter: (to, from, next) => {
-      localStorage.clear(); // Limpia todo el localStorage al acceder al registro
+      localStorage.clear(); 
       next();
     },
   },

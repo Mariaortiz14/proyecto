@@ -16,16 +16,16 @@ import Footer from './components/Footer.vue';
 export default {
   data() {
     return {
-      isLoggedIn: false // Estado inicial
+      isLoggedIn: false 
     };
   },
   methods: {
     handleLogin() {
-      this.isLoggedIn = true; // Cambia el estado cuando inicie sesión
+      this.isLoggedIn = true; 
     },
     handleLogout() {
-      this.isLoggedIn = false; // Cambia el estado cuando cierre sesión
-      this.$router.push('/login'); // Redirige al login
+      this.isLoggedIn = false; 
+      this.$router.push('/login');
     }
   },
   components: {
@@ -47,9 +47,8 @@ export default {
 }
 
 .main-content {
-  flex: 1; /* Ocupa el espacio entre el Header y Footer */
+  flex: 1; 
   padding: 20px;
 }
 
-/* Puedes ajustar estos estilos si necesitas un diseño más personalizado */
 </style>

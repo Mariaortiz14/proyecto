@@ -76,7 +76,7 @@
         const eventId = this.$route.params.id;
         try {
           const response = await axios.get(`http://localhost:8000/events/${eventId}`);
-          this.event = response.data; // Cargar datos del evento en el formulario
+          this.event = response.data; 
         } catch (error) {
           console.error("Error al cargar los detalles del evento:", error);
           Swal.fire("Error", "No se pudieron cargar los detalles del evento.", "error");
@@ -84,7 +84,7 @@
       },
       async updateEvent() {
   try {
-    const eventId = this.$route.params.id; // Asegúrate de que el ID del evento sea correcto
+    const eventId = this.$route.params.id; 
     const response = await axios.put(`http://localhost:8000/events/${eventId}`, {
       title: this.event.title,
       description: this.event.description,
@@ -100,7 +100,7 @@
   }
 },
       cancelEdit() {
-        this.$router.push("/my-events"); // Redirigir a la página de "Mis Eventos"
+        this.$router.push("/my-events"); 
       },
     },
   };

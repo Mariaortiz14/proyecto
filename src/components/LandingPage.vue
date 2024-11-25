@@ -2,7 +2,6 @@
   <div class="landing-page">
     <h1>Bienvenido, {{ username }}</h1>
 
-    <!-- Carrusel -->
     <div class="carousel">
       <div v-for="(image, index) in carouselImages" :key="index" class="carousel-item" :style="index === currentSlide ? {} : {display: 'none'}">
         <img :src="image.src" :alt="image.alt" />
@@ -10,7 +9,6 @@
       </div>
     </div>
 
-    <!-- Categorías -->
     <div class="categories">
       <h2>Categorías</h2>
       <div class="category-list">
@@ -21,7 +19,6 @@
       </div>
     </div>
 
-    <!-- Favoritos -->
     <div class="favorites">
       <h2>¡Eventos Disponibles!</h2>
       <p class="par">Explora los ultimos eventos</p>
@@ -71,18 +68,18 @@ export default {
         { id: 5, name: "Conciertos", image: "src/assets/baile.png" },
         { id: 6, name: "Teatro", image: "src/assets/teatro.png" },
       ],
-      favoriteEvents: []  // Aquí se almacenarán los eventos favoritos obtenidos desde el backend
+      favoriteEvents: []  
     };
   },
   mounted() {
     this.fetchEvents();
-    setInterval(this.nextSlide, 5000); // Cambiar imagen cada 5 segundos
+    setInterval(this.nextSlide, 3000); 
   },
   methods: {
     async fetchEvents() {
       try {
         const response = await axios.get("http://localhost:8000/events", { params: { limit: 8 } });
-        this.favoriteEvents = response.data; // Asignar la respuesta a `favoriteEvents`
+        this.favoriteEvents = response.data;
         console.log("Eventos cargados:", this.favoriteEvents);
       } catch (error) {
         console.error("Error al cargar los eventos:", error);
@@ -106,10 +103,9 @@ export default {
   background: linear-gradient(0deg, rgba(77,77,77,1) 0%, rgba(140,168,255,1) 19%, rgba(189,137,254,1) 60%, rgba(252,244,244,1) 90%);
 }
 
-/* Carrusel */
 .carousel {
   width: 100%;
-  height: 400px; /* Ajusta la altura según sea necesario */
+  height: 400px; 
   position: relative;
   overflow: hidden;
 }
@@ -124,7 +120,7 @@ export default {
 .carousel-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Para que la imagen se ajuste al contenedor */
+  object-fit: cover; 
 }
 
 .carousel-caption {
@@ -138,7 +134,7 @@ export default {
   padding: 10px 20px;
 }
 
-/* Categorías */
+
 .categories h2 {
   font-size: 3rem;
   margin-bottom: 30px;
@@ -180,7 +176,7 @@ export default {
   transform: scale(1.1);
 }
 
-/* Favoritos */
+
 .favorites h2 {
   font-size: 2rem;
   margin-bottom: 20px;
