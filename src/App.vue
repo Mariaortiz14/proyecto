@@ -1,7 +1,10 @@
 <template>
-  <div id="app">
-    <Header />
-    <router-view />
+  <div>
+    <Header 
+      :isLoggedIn="isLoggedIn" 
+      @logout="handleLogout" 
+    />
+    <router-view @loginSuccess="handleLogin" />
     <Footer />
   </div>
 </template>
@@ -11,13 +14,27 @@ import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 
 export default {
-  name: 'App',
+  data() {
+    return {
+      isLoggedIn: false // Estado inicial
+    };
+  },
+  methods: {
+    handleLogin() {
+      this.isLoggedIn = true; // Cambia el estado cuando inicie sesión
+    },
+    handleLogout() {
+      this.isLoggedIn = false; // Cambia el estado cuando cierre sesión
+      this.$router.push('/login'); // Redirige al login
+    }
+  },
   components: {
     Header,
-    Footer,
-  },
+    Footer
+  }
 };
 </script>
+
 
 <style>
 #app {

@@ -12,13 +12,19 @@
           class="input-field"
           required
         />
-        <input
-          v-model="password"
-          type="password"
-          placeholder="Contraseña"
-          class="input-field"
-          required
-        />
+        <div class="password-container">
+          <input
+            v-model="password"
+            :type="showPassword ? 'text' : 'password'"
+            placeholder="Contraseña"
+            class="input-field"
+            required
+          />
+          <button type="button" class="toggle-password" @click="togglePasswordVisibility">
+            <span v-if="showPassword">🙈</span>
+            <span v-else>👁️</span>
+          </button>
+        </div>
         <button type="submit" class="submit-button">Iniciar Sesión</button>
       </form>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -38,10 +44,14 @@ export default {
     return {
       username: '',
       password: '',
+      showPassword: false, // Estado para alternar la visibilidad de la contraseña
       errorMessage: ''
     };
   },
   methods: {
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword; // Alterna entre mostrar/ocultar la contraseña
+    },
     async loginUser() {
       try {
         const response = await axios.post('http://localhost:8000/login/', {
@@ -50,8 +60,12 @@ export default {
         });
 
         if (response.data.message === 'Inicio de sesión exitoso') {
-          localStorage.setItem('userName', this.username); 
-          this.$router.push('/home'); 
+          const { user_id, name, token } = response.data;
+          localStorage.setItem('user_id', user_id);
+          localStorage.setItem('userName', name);
+          localStorage.setItem('token', token);
+
+          this.$router.push('/landingPage');
         }
       } catch (error) {
         this.errorMessage = 'Usuario o contraseña incorrectos';
@@ -73,7 +87,7 @@ html, body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: url('src/assets/WhatsApp Image 2024-10-21 at 9.27.20 PM.jpeg') no-repeat center center;
+  background: url('src/assets/fondopagina.webp') no-repeat center center;
   background-size: cover;
 }
 
@@ -89,12 +103,13 @@ html, body {
 }
 
 .form-container {
-  max-width: 400px;
-  padding: 30px;
+  max-width: 500px; /* Aumentado para que las barras no se salgan */
+  padding: 40px;
   border-radius: 12px;
   background-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   text-align: center;
+  width: 90%; /* Se adapta al ancho de la pantalla */
 }
 
 .login-form {
@@ -109,6 +124,7 @@ html, body {
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.3s;
+  width: 95%; /* Asegura que no se salga del contenedor */
 }
 
 .input-field:focus {
@@ -118,6 +134,21 @@ html, body {
 
 .password-container {
   position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.toggle-password:hover {
+  color: #007bff;
 }
 
 .submit-button {
@@ -155,3 +186,4 @@ html, body {
   text-decoration: underline;
 }
 </style>
+

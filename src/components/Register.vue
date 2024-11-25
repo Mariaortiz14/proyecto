@@ -39,7 +39,7 @@
             class="input-field"
           />
           <button type="button" @click="togglePasswordVisibility" class="eye-button">
-            <span v-if="passwordVisible">👁️</span>
+            <span v-if="passwordVisible">🙈</span>
             <span v-else>👁️‍🗨️</span>
           </button>
         </div>
@@ -52,7 +52,7 @@
             class="input-field"
           />
           <button type="button" @click="toggleConfirmPasswordVisibility" class="eye-button">
-            <span v-if="confirmPasswordVisible">👁️</span>
+            <span v-if="confirmPasswordVisible">🙈</span>
             <span v-else>👁️‍🗨️</span>
           </button>
         </div>
@@ -126,7 +126,7 @@ html, body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: url('src/assets/WhatsApp Image 2024-10-21 at 9.27.20 PM.jpeg') no-repeat center center;
+  background: url('src/assets/fondopagina.webp') no-repeat center center;
   background-size: cover;
 }
 

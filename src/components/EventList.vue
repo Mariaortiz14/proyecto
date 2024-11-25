@@ -1,46 +1,46 @@
 <template>
-  <section>
-    <h2>Próximos Eventos</h2>
-    <ul v-if="events.length">
-      <li v-for="event in events" :key="event.id" class="event-item">
-        <h3>{{ event.name }}</h3>
+  <div class="event-list">
+    <div v-if="events.length > 0">
+      <div v-for="event in events" :key="event.id" class="event-card">
+        <h2>{{ event.name }}</h2>
         <p>{{ event.description }}</p>
-        <p><strong>Fecha:</strong> {{ new Date(event.date).toLocaleDateString() }}</p>
-        <p><strong>Ubicación:</strong> {{ event.location }}</p>
-      </li>
-    </ul>
+        <p><strong>{{ event.date }}</strong></p>
+      </div>
+    </div>
     <p v-else>No hay eventos disponibles en este momento.</p>
-  </section>
+  </div>
 </template>
 
 <script>
 export default {
   name: 'EventList',
   props: {
-    events: Array
+    events: Array // Espera una lista de eventos como propiedad
   }
 };
 </script>
 
 <style>
-.event-item {
-  margin-bottom: 20px;
-  padding: 15px;
-  border-bottom: 1px solid #ccc;
+.event-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.event-card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 300px;
+  background-color: #f9f9f9;
 }
 
 h2 {
-  color: #555;
-  font-size: 1.5em;
-}
-
-h3 {
-  font-size: 1.3em;
-  color: #444;
+  color: #333;
 }
 
 p {
-  color: #666;
-  margin: 5px 0;
+  color: #555;
 }
 </style>
