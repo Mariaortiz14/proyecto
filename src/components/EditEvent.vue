@@ -1,4 +1,5 @@
 <template>
+  <div class="fondo">
     <div class="edit-event">
       <h1>Editar Evento</h1>
       <form @submit.prevent="updateEvent">
@@ -49,6 +50,7 @@
         </div>
       </form>
     </div>
+  </div>
   </template>
   
   <script>
@@ -107,6 +109,7 @@
   </script>
   
   <style>
+  
   .edit-event {
     max-width: 700px;
     margin: 0 auto;

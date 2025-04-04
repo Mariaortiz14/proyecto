@@ -27,7 +27,7 @@
           <h3>{{ event.title || "Sin título" }}</h3>
           <p>{{ event.description || "Sin descripción" }}</p>
           <p><strong>Publicado por:</strong> {{ event.user?.name || "Desconocido" }} ({{ event.user?.email || "Correo no disponible" }})</p>
-          <button @click="viewEvent(event.id)">Ver más</button>
+          <button @click="goToEventDetail(event)">Ver más</button>
         </div>
       </div>
     </div>
@@ -85,8 +85,8 @@ export default {
         console.error("Error al cargar los eventos:", error);
       }
     },
-    viewEvent(eventId) {
-      this.$router.push(`/event/${eventId}`);
+    goToEventDetail(event) {
+      this.$router.push(`/guest-event/${event.id}`);
     },
     nextSlide() {
       this.currentSlide = (this.currentSlide + 1) % this.carouselImages.length;
@@ -226,7 +226,7 @@ export default {
 
 .favorite-card button {
   padding: 10px 30px;
-  background-color: #007bff;
+  background-color: #a828d2;
   color: white;
   border: none;
   border-radius: 5px;

@@ -11,6 +11,7 @@
         <p><strong>Fecha:</strong> {{ formatDate(event.event_date) }}</p>
         <p><strong>Descripción:</strong> {{ event.description }}</p>
         <button @click="goToEventDetail(event)" class="view-details">Ver detalles</button>
+        
 
       </div>
     </div>
@@ -76,7 +77,7 @@ export default {
 
 <style>
 .my-events {
-  padding: 20px;
+  padding: 100px;
   text-align: center;
   background: rgb(77,77,77);
 background: linear-gradient(0deg, rgba(77,77,77,1) 0%, rgba(140,168,255,1) 19%, rgba(189,137,254,1) 60%, rgba(252,244,244,1) 90%);

@@ -4,7 +4,7 @@
       <h1>Editar Perfil</h1>
 
       <div class="profile-image">
-        <img :src="imageUrl || defaultProfileImage" alt="Foto de perfil" />
+        <img :src="imageUrl || defaultProfileImage" alt="Foto de perfil" width="100" />
         <label for="profile-image" class="upload-label">Cambiar Foto</label>
         <input
           type="file"
@@ -20,33 +20,15 @@
           <h2>Información Personal</h2>
           <div class="form-group">
             <label for="first-name">Nombre</label>
-            <input
-              type="text"
-              id="first-name"
-              v-model="profile.firstName"
-              placeholder="Tu nombre"
-              required
-            />
+            <input type="text" id="first-name" v-model="profile.firstName" required />
           </div>
           <div class="form-group">
             <label for="last-name">Apellido</label>
-            <input
-              type="text"
-              id="last-name"
-              v-model="profile.lastName"
-              placeholder="Tu apellido"
-              required
-            />
+            <input type="text" id="last-name" v-model="profile.lastName" required />
           </div>
           <div class="form-group">
             <label for="email">Correo Electrónico</label>
-            <input
-              type="email"
-              id="email"
-              v-model="profile.email"
-              placeholder="ejemplo@email.com"
-              required
-            />
+            <input type="email" id="email" v-model="profile.email" required />
           </div>
         </section>
 
@@ -54,38 +36,21 @@
           <h2>Cambiar Contraseña</h2>
           <div class="form-group">
             <label for="current-password">Contraseña Actual</label>
-            <input
-              type="password"
-              id="current-password"
-              v-model="profile.currentPassword"
-              placeholder="Contraseña actual"
-            />
+            <input type="password" id="current-password" v-model="profile.currentPassword" />
           </div>
           <div class="form-group">
             <label for="new-password">Nueva Contraseña</label>
-            <input
-              type="password"
-              id="new-password"
-              v-model="profile.newPassword"
-              placeholder="Nueva contraseña"
-            />
+            <input type="password" id="new-password" v-model="profile.newPassword" />
           </div>
           <div class="form-group">
             <label for="confirm-password">Confirmar Contraseña</label>
-            <input
-              type="password"
-              id="confirm-password"
-              v-model="profile.confirmPassword"
-              placeholder="Confirmar nueva contraseña"
-            />
+            <input type="password" id="confirm-password" v-model="profile.confirmPassword" />
           </div>
         </section>
 
         <div class="actions">
           <button type="submit" class="btn-primary">Guardar Cambios</button>
-          <button type="button" class="btn-secondary" @click="resetForm">
-            Cancelar
-          </button>
+          <button type="button" class="btn-secondary" @click="resetForm">Cancelar</button>
         </div>
       </form>
     </div>
@@ -109,7 +74,7 @@ export default {
         image: null,
       },
       imageUrl: null,
-      defaultProfileImage: "src/assets/perfil-por-defecto.png", 
+      defaultProfileImage: "C:/Nur_Derly/gestion/proyecto/src/assets/perfil-por-defecto.png",
     };
   },
   mounted() {
@@ -128,11 +93,9 @@ export default {
         const response = await fetch(`http://localhost:8000/users/${userId}`);
         if (response.ok) {
           const data = await response.json();
-          this.profile = {
-            firstName: data.firstName || "",
-            lastName: data.lastName || "",
-            email: data.email || "",
-          };
+          this.profile.firstName = data.firstName || "";
+          this.profile.lastName = data.lastName || "";
+          this.profile.email = data.email || "";
           this.imageUrl = data.image || this.defaultProfileImage;
         } else {
           Swal.fire("Error", "No se pudo cargar el perfil del usuario.", "error");
@@ -142,59 +105,57 @@ export default {
       }
     },
     async submitForm() {
-  const userId = localStorage.getItem("user_id");
-  if (!userId) {
-    Swal.fire("Error", "Usuario no autenticado.", "error");
-    return;
-  }
+      const userId = localStorage.getItem("user_id");
+      if (!userId) {
+        Swal.fire("Error", "Usuario no autenticado.", "error");
+        return;
+      }
 
-  if (this.profile.newPassword !== this.profile.confirmPassword) {
-    Swal.fire("Error", "Las contraseñas no coinciden.", "error");
-    return;
-  }
+      if (this.profile.newPassword && this.profile.newPassword !== this.profile.confirmPassword) {
+        Swal.fire("Error", "Las contraseñas no coinciden.", "error");
+        return;
+      }
 
-  const formData = new FormData();
-  formData.append("firstName", this.profile.firstName);
-  formData.append("lastName", this.profile.lastName);
-  formData.append("email", this.profile.email);
-  formData.append("currentPassword", this.profile.currentPassword);
-  formData.append("newPassword", this.profile.newPassword);
-  if (this.profile.image) {
-    formData.append("image", this.profile.image);
-  }
+      const formData = new FormData();
+      formData.append("firstName", this.profile.firstName);
+      formData.append("lastName", this.profile.lastName);
+      formData.append("email", this.profile.email);
 
-  try {
-    const response = await fetch(`http://localhost:8000/users/${userId}/profile`, {
-      method: "PUT",
-      body: formData,
-    });
+      if (this.profile.currentPassword && this.profile.newPassword) {
+        formData.append("currentPassword", this.profile.currentPassword);
+        formData.append("newPassword", this.profile.newPassword);
+      }
 
-    const responseData = await response.json();
-    console.log("Respuesta del servidor:", responseData);
+      if (this.profile.image) {
+        formData.append("file", this.profile.image);
+      }
 
-    if (response.ok) {
-      Swal.fire("Éxito", "Perfil actualizado correctamente.", "success");
-      this.loadUserProfile(); 
-    } else {
-      Swal.fire(
-        "Error",
-        responseData.detail || "No se pudo actualizar el perfil. Inténtalo de nuevo.",
-        "error"
-      );
-    }
-  } catch (error) {
-    console.error("Error al conectar con el servidor:", error);
-    Swal.fire("Error", "Ocurrió un problema al conectar con el servidor.", "error");
-  }
-},
+      try {
+        const response = await fetch(`http://localhost:8000/users/${userId}/profile`, {
+          method: "PUT",
+          body: formData,
+        });
+
+        const responseData = await response.json();
+        if (response.ok) {
+          Swal.fire("Éxito", "Perfil actualizado correctamente.", "success");
+          this.loadUserProfile();
+        } else {
+          Swal.fire("Error", responseData.detail || "No se pudo actualizar el perfil.", "error");
+        }
+      } catch (error) {
+        Swal.fire("Error", "Ocurrió un problema al conectar con el servidor.", "error");
+      }
+    },
     resetForm() {
-      this.loadUserProfile(); 
+      this.loadUserProfile();
     },
     handleImageUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        this.profile.image = file;
-        this.imageUrl = URL.createObjectURL(file);
+        this.imageUrl = URL.createObjectURL(file); // Crea la vista previa
+        console.log("Vista previa generada:", this.imageUrl);
+
       }
     },
   },

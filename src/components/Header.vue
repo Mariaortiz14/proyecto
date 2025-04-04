@@ -2,13 +2,13 @@
   <header>
     <div class="header-content">
       <img
-        src="C:/Nur_Derly/gestion/proyecto/src/assets/logo-happenit.jpeg"
+        src="C:\Nur_Derly\gestion\proyecto\src\assets\Lootipo-Happenit-2.0.png"
         alt="Happenit Logo"
         class="logo"
       />
       <nav>
         <ul>
-          <li><router-link to="/landingPage">Inicio</router-link></li>
+          <li v-if="isLoggedIn"><router-link to="/landingPage">Inicio</router-link></li>
           <li v-if="isLoggedIn"><router-link to="/edit-profile">Ver perfil</router-link></li>
           <li v-if="isLoggedIn"><router-link to="/my-events">Mis Eventos</router-link></li>
           <li v-if="isLoggedIn"><router-link to="/calendar">Calendario</router-link></li>
@@ -60,8 +60,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
-  background: rgb(255,255,255);
-  background: linear-gradient(90deg, rgba(255,255,255,1) 10%, rgba(237,165,255,1) 29%, rgba(255,111,211,1) 52%, rgba(255,20,135,1) 71%, rgba(187,170,255,1) 93%);
+  background: rgb(0,0,0);
+  background: linear-gradient(90deg, rgba(0,0,0,1) 22%, rgba(44,20,37,1) 38%, rgba(44,20,37,1) 39%, rgba(199,88,165,1) 60%, rgba(255,0,125,1) 82%);
   color: white;
   width: 100%;
   box-sizing: border-box;

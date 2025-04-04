@@ -8,6 +8,7 @@
       
       <div class="actions">
         <button @click="editEvent" class="btn-edit">Editar Evento</button>
+        <button @click="editEvent" class="btn-edit1">Eliminar Evento</button>
       </div>
     </div>
     <div v-else class="loading">
@@ -103,6 +104,18 @@ export default {
   background-color: #007bff;
   color: #fff;
   border: none;
+  margin: 10px;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.btn-edit1 {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  margin: 10px;
   border-radius: 8px;
   padding: 10px 20px;
   font-size: 1rem;

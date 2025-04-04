@@ -6,10 +6,10 @@ import EventList from '@/components/EventList.vue';
 import Calendar from '@/components/Calendar.vue';
 import ProfileEdit from '@/components/ProfileEdit.vue';
 import MyEvent from '@/components/MyEvent.vue';
+import GuestEventDetail from '@/components/GuestEventDetail.vue';
 import EventDetail from '@/components/EventDetail.vue';
 import EventForm from '@/components/EventForm.vue';
 import EditEvent from '@/components/EditEvent.vue';
-
 const routes = [
   {
     path: '/',
@@ -55,6 +55,12 @@ const routes = [
     name: 'Events',
     component: EventList
   },
+  {
+    path: "/guest-event/:id",
+    name: "GuestEventDetail",
+    component: GuestEventDetail
+  },
+  
   {
     path: '/calendar',
     name: 'Calendar',
