@@ -1,153 +1,142 @@
 <template>
-  <div class="guest-event-detail">
-    <h1>{{ event.title }}</h1>
-    <div class="event-info">
-      <img :src="getImageUrl(event.image_url)" alt="Imagen del evento" class="event-image" />
-      <div class="event-details">
-        <p><strong>Descripción:</strong> {{ event.description }}</p>
-        <p><strong>Fecha:</strong> {{ formatDate(event.event_date) }}</p>
-        <p><strong>Publicado por:</strong> {{ event.user?.name || "Anónimo" }} ({{ event.user?.email || "Sin correo" }})</p>
-      </div>
-    </div> 
-
-    <div class="comments-section">
-      <h2>Comentarios</h2>
-      <textarea v-model="newComment" placeholder="Escribe tu comentario aquí..." rows="4"></textarea>
-      <button @click="addComment">Agregar comentario</button>
-
-      <div v-if="comments.length" class="comment-list">
-        <div v-for="(comment, index) in comments" :key="index" class="comment-card">
-          <p><strong>{{ comment.user }}</strong></p>
-          <p>{{ comment.content }}</p>
-          <p class="comment-date">{{ formatDate(comment.date) }}</p>
+<div class="eventDetail">
+  <div class="card">
+    <span>
+      <div class="content">
+        <div class="event-detail">
+          <h1>{{ event.title }}</h1>
+          <p><strong>Publicado por:</strong> {{ event.user?.name || 'Anónimo' }}</p>
+          <p><strong>Descripción:</strong> {{ event.description }}</p>
+          <p><strong>Fecha:</strong> {{ formattedDate }}</p>
+          <p><strong>Lugar:</strong> {{ event.location }}</p>
+          <p><strong>Categoría:</strong> {{ event.category }}</p>
         </div>
       </div>
-      <div v-else>
-        <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
-      </div>
-    </div>
+    </span>
+    <Comments :eventId="event.id" />
   </div>
+</div>
 </template>
 
-
 <script>
-import axios from "axios";
+import axios from 'axios'
+import Comments from './Comments.vue'
 
 export default {
-data() {
-  return {
-    event: {},
-    comments: [],
-    newComment: "",
-    defaultImage: "/static/default-event.jpg", // Imagen por defecto
-  };
-},
-async created() {
-  const eventId = this.$route.params.id;
-  try {
-    const response = await axios.get(`http://localhost:8000/events/${eventId}`);
-    this.event = response.data;
-    this.fetchComments();
-  } catch (error) {
-    console.error("Error al obtener el evento:", error);
+  name: 'GuestEventDetail',
+  components: {
+    Comments
+  },
+  data() {
+    return {
+      event: null
+    }
+  },
+  computed: {
+    formattedDate() {
+      return this.event
+        ? new Date(this.event.event_date).toLocaleString()
+        : ''
+    }
+  },
+  created() {
+    const eventId = this.$route.params.id
+
+    axios
+      .get(`http://localhost:8000/events/${eventId}`)
+      .then((response) => {
+        this.event = response.data
+        console.log('Evento cargado:', this.event)
+      })
+      .catch((error) => {
+        console.error('Error al cargar el evento:', error)
+      })
   }
-},
-methods: {
-  getImageUrl(imagePath) {
-    if (!imagePath) return this.defaultImage;
-    if (imagePath.startsWith("static/")) {
-      return `http://localhost:8000/${imagePath}`;
-    }
-    return imagePath;
-  },
-  formatDate(date) {
-    return new Date(date).toLocaleString();
-  },
-  async fetchComments() {
-    try {
-      const response = await axios.get(`http://localhost:8000/events/${this.event.id}/comments`);
-      this.comments = response.data;
-    } catch (error) {
-      console.error("Error al obtener comentarios:", error);
-    }
-  },
-  async addComment() {
-    if (!this.newComment.trim()) return;
-    
-    try {
-      await axios.post(`http://localhost:8000/events/${this.event.id}/comments`, {
-        content: this.newComment,
-        user: "Anónimo", // Reemplazar con usuario real si está autenticado
-      });
-
-      this.comments.push({
-        user: "Anónimo",
-        content: this.newComment,
-        date: new Date().toISOString(),
-      });
-
-      this.newComment = "";
-    } catch (error) {
-      console.error("Error al agregar comentario:", error);
-    }
-  },
-},
-};
+}
 </script>
-  
-  <style>
-  .guest-event-detail {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.eventDetail {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 100px; /* espacio para el header */
+  padding-bottom: 100px; /* espacio para el footer */
+  box-sizing: border-box;
+}
+
+/* Fondo animado suave tipo ondas/luz */
+.eventDetail::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,0,150,0.2), transparent 40%),
+              radial-gradient(circle, rgba(0,255,255,0.15), transparent 30%),
+              radial-gradient(circle, rgba(255,255,0,0.1), transparent 50%);
+  animation: moveBackground 30s linear infinite;
+  z-index: 0;
+}
+
+/* Animación del fondo */
+@keyframes moveBackground {
+  0% {
+    transform: translate(0%, 0%) rotate(0deg);
   }
-  
-  .event-info {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+  50% {
+    transform: translate(25%, 25%) rotate(180deg);
   }
-  
-  .event-image {
-    max-width: 400px;
-    border-radius: 8px;
-    object-fit: cover;
+  100% {
+    transform: translate(0%, 0%) rotate(360deg);
   }
-  
-  .event-details p {
-    margin-bottom: 10px;
-  }
-  
-  textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
-  
-  button {
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background: #0056b3;
-  }
-  
-  .comment-card {
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  </style>
-  
+}
+
+.card {
+  position: relative;
+  max-width: 600px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(255, 0, 88, 0.4);
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.card .content {
+  border-radius: 15px;
+  padding: 20px;
+  line-height: 1.5;
+}
+
+.card h1 {
+  font-size: 1.8em;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.card p {
+  font-size: 1em;
+  margin: 6px 0;
+  color: #e0e0e0;
+}
+
+</style>

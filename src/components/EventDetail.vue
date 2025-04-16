@@ -1,135 +1,135 @@
-<template><h1>Editar Evento</h1>
-  <div class="event-detail">
-    
+<template>
+  <div class="container">
     <div v-if="event" class="event-card">
-      <h1>{{ event.title }}</h1>
-      <p><strong>Fecha:</strong> {{ formatDate(event.event_date) }}</p>
-      <p><strong>Descripción:</strong> {{ event.description }}</p>
-      
-      <div class="actions">
-        <button @click="editEvent" class="btn-edit">Editar Evento</button>
-        <button @click="editEvent" class="btn-edit1">Eliminar Evento</button>
+      <h1 class="event-title">{{ event.title }}</h1>
+      <p class="event-info"><strong>Descripción:</strong> {{ event.description }}</p>
+      <p class="event-info"><strong>Fecha:</strong> {{ formattedDate }}</p>
+      <p class="event-info"><strong>Ubicación:</strong> {{ event.location }}</p>
+      <p class="event-info"><strong>Categoría:</strong> {{ event.category }}</p>
+      <p class="event-info">
+        <strong>Organizado por:</strong> {{ event.user.name }} ({{ event.user.email }})
+      </p>
+      <div v-if="isOwner" class="action-buttons">
+        <button @click="goToEdit" class="btn-edit">Editar</button>
+        <button @click="confirmDelete" class="btn-delete">Eliminar</button>
       </div>
     </div>
-    <div v-else class="loading">
-      <p>Cargando detalles del evento...</p>
-    </div>
+
+    <div v-else class="loading">Cargando evento...</div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios'
+import Swal from 'sweetalert2'
 
 export default {
-  name: "EventDetail",
+  name: 'EventDetail',
   data() {
     return {
-      event: null, 
-      error: null, 
-    };
+      event: null,
+      isOwner: false
+    }
+  },
+  computed: {
+    formattedDate() {
+      return this.event
+        ? new Date(this.event.event_date).toLocaleString()
+        : ''
+    }
   },
   methods: {
-    async fetchEvent() {
+    async loadEvent() {
+      const eventId = this.$route.params.id
       try {
-        const eventId = this.$route.params.id; 
-        if (!eventId) {
-          this.error = "No se proporcionó un ID de evento válido.";
-          return;
-        }
-        const response = await axios.get(`http://localhost:8000/events/${eventId}`);
-        this.event = response.data; 
+        const response = await axios.get(`http://localhost:8000/events/${eventId}`)
+        this.event = response.data
+
+        const currentUserId = parseInt(localStorage.getItem('user_id'))
+        this.isOwner = this.event.user.id === currentUserId
       } catch (error) {
-        console.error("Error al cargar los detalles del evento:", error);
-        this.error = "Hubo un problema al cargar los detalles del evento.";
+        console.error('Error al cargar el evento:', error)
       }
     },
-    formatDate(date) {
-      if (!date) return "Fecha no disponible";
-      const options = { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" };
-      const eventDate = new Date(date);
-      return eventDate.toLocaleDateString("es-ES", options);
+    goToEdit() {
+      this.$router.push({ name: 'EditEvent', params: { id: this.event.id } })
     },
-    editEvent() {
-      if (this.event) {
-        this.$router.push(`/events/edit/${this.event.id}`);
-      }
-    },
+    confirmDelete() {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el evento permanentemente.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const token = localStorage.getItem('token')
+            await axios.delete(`http://localhost:8000/events/${this.event.id}`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
+            Swal.fire('Eliminado', 'El evento fue eliminado correctamente', 'success')
+            this.$router.push('/mis-eventos')
+          } catch (error) {
+            console.error('Error al eliminar el evento:', error)
+            Swal.fire('Error', 'No se pudo eliminar el evento', 'error')
+          }
+        }
+      })
+    }
   },
-  mounted() {
-    this.fetchEvent(); 
-  },
-};
+  created() {
+    this.loadEvent()
+  }
+}
 </script>
 
+
+
 <style>
-.event-detail {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-  background: linear-gradient(0deg, rgba(77, 77, 77, 1) 0%, rgba(140, 168, 255, 1) 19%, rgba(189, 137, 254, 1) 60%, rgba(252, 244, 244, 1) 90%);
+.btn-edit,
+.btn-delete {
+  padding: 10px 15px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
-
-.event-card {
-  width: 90%;
-  max-width: 600px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  text-align: center;
-  font-family: Arial, sans-serif;
-}
-
-.event-card h1 {
-  font-size: 2rem;
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.event-card p {
-  font-size: 1rem;
-  margin: 10px 0;
-  color: #555;
-}
-
-.event-card .actions {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
 .btn-edit {
   background-color: #007bff;
-  color: #fff;
-  border: none;
-  margin: 10px;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  color: white;
 }
-.btn-edit1 {
-  background-color: #6c757d;
-  color: #fff;
-  border: none;
-  margin: 10px;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
 }
-
-.btn-edit:hover {
-  background-color: #0056b3;
+textarea {
+  width: 100%;
+  min-height: 80px;
+  margin-top: 10px;
+  padding: 8px;
 }
-
-.loading {
-  font-size: 1.2rem;
-  color: #333;
-  text-align: center;
+.comment-section {
+  margin-top: 20px;
+}
+.comment-card {
+  background-color: #f5f5f5;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+}
+.comment-date {
+  font-size: 0.8rem;
+  color: gray;
+}
+.login-warning {
+  color: red;
+  font-style: italic;
+}
+.action-buttons {
+  margin-top: 20px;
 }
 </style>

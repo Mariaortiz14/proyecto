@@ -5,6 +5,7 @@
       @logout="handleLogout" 
     />
     <router-view @loginSuccess="handleLogin" />
+  
     <Footer />
   </div>
 </template>

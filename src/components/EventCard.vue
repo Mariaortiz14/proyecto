@@ -1,27 +1,28 @@
 <template>
-  <div class="event-card" @click="goToEventDetail">
-    <h2>{{ event.title }}</h2>
+  <div class="event-card" @click="goToDetail">
+    <h3>{{ event.title }}</h3>
+    <p><strong>Publicado por:</strong> {{ event.user?.name || 'Anónimo' }}</p>
     <p>{{ event.description }}</p>
-    <p><strong>Fecha:</strong> {{ formatDate(event.event_date) }}</p>
-    <button class="view-details">Ver detalles</button>
+    <p><strong>Fecha:</strong> {{ formattedDate }}</p>
+    <p><strong>Lugar:</strong> {{ event.location }}</p>
+    <p><strong>Categoría:</strong> {{ event.category }}</p>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'EventCard',
+  name: "EventCard",
   props: {
     event: Object
   },
+  computed: {
+    formattedDate() {
+      return new Date(this.event.event_date).toLocaleString();
+    }
+  },
   methods: {
-    goToEventDetail() {
-      this.$router.push(`/events/${this.event.id}`);
-    },
-    formatDate(date) {
-      const eventDate = new Date(date);
-      return eventDate.toLocaleDateString('es-ES', {
-        year: 'numeric', month: 'long', day: 'numeric'
-      });
+    goToDetail() {
+      this.$router.push(`/guest-event/${this.event.id}`);
     }
   }
 };
@@ -30,35 +31,13 @@ export default {
 <style>
 .event-card {
   border: 1px solid #ccc;
-  padding: 20px;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  padding: 1rem;
+  margin: 0.5rem;
   cursor: pointer;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.2s ease;
 }
-
 .event-card:hover {
-  transform: scale(1.05);
-}
-
-h2 {
-  color: #333;
-}
-
-p {
-  color: #555;
-}
-
-.view-details {
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.view-details:hover {
-  background-color: #0056b3;
+  transform: scale(1.02);
 }
 </style>

@@ -1,70 +1,69 @@
 <template>
-  <div class="register">
-    <div class="form-container">
-      <h2>Registro</h2>
-      <form @submit.prevent="registerUser" class="register-form">
-        <input
-          v-model="registerForm.name"
-          type="text"
-          placeholder="Nombre"
-          required
-          class="input-field"
-        />
-        <input
-          v-model="registerForm.surname"
-          type="text"
-          placeholder="Apellido"
-          class="input-field"
-        />
-        <input
-          v-model="registerForm.phone"
-          type="text"
-          placeholder="Teléfono"
-          required
-          class="input-field"
-        />
-        <input
-          v-model="registerForm.email"
-          type="email"
-          placeholder="Email"
-          required
-          class="input-field"
-        />
-        <div class="password-container">
-          <input
-            v-model="registerForm.password"
-            :type="passwordVisible ? 'text' : 'password'"
-            placeholder="Contraseña"
-            required
-            class="input-field"
-          />
-          <button type="button" @click="togglePasswordVisibility" class="eye-button">
-            <span v-if="passwordVisible">🙈</span>
-            <span v-else>👁️‍🗨️</span>
-          </button>
-        </div>
-        <div class="password-container">
-          <input
-            v-model="registerForm.confirm_password"
-            :type="confirmPasswordVisible ? 'text' : 'password'"
-            placeholder="Repite tu contraseña"
-            required
-            class="input-field"
-          />
-          <button type="button" @click="toggleConfirmPasswordVisibility" class="eye-button">
-            <span v-if="confirmPasswordVisible">🙈</span>
-            <span v-else>👁️‍🗨️</span>
-          </button>
-        </div>
-        <button type="submit" class="submit-button">Registrarse</button>
-      </form>
-      <p>
-        ¿Ya tienes cuenta? <router-link to="/Login">Iniciar Sesión</router-link>
-      </p>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+  <div class="login-container">
+    <div class="form-side">
+      <div class="form">
+        <h2 id="heading">Registro</h2>
+        <form @submit.prevent="registerUser" class="register-form">
+          <div class="field">
+            <input v-model="registerForm.name" type="text" placeholder="Nombre" required class="input-field" />
+          </div>
+          <div class="field">
+            <input v-model="registerForm.surname" type="text" placeholder="Apellido" class="input-field" />
+          </div>
+          <div class="field">
+            <input v-model="registerForm.phone" type="text" placeholder="Teléfono" required class="input-field" />
+          </div>
+          <div class="field">
+            <input v-model="registerForm.email" type="email" placeholder="Email" required class="input-field" />
+          </div>
+
+          <div class="field password-container">
+            <input
+              v-model="registerForm.password"
+              :type="passwordVisible ? 'text' : 'password'"
+              placeholder="Contraseña"
+              required
+              class="input-field"
+            />
+            <button type="button" @click="togglePasswordVisibility" class="eye-button">
+              <span v-if="passwordVisible">🙈</span>
+              <span v-else>👁️‍🗨️</span>
+            </button>
+          </div>
+
+          <div class="field password-container">
+            <input
+              v-model="registerForm.confirm_password"
+              :type="confirmPasswordVisible ? 'text' : 'password'"
+              placeholder="Repite tu contraseña"
+              required
+              class="input-field"
+            />
+            <button type="button" @click="toggleConfirmPasswordVisibility" class="eye-button">
+              <span v-if="confirmPasswordVisible">🙈</span>
+              <span v-else>👁️‍🗨️</span>
+            </button>
+          </div>
+
+          <div class="btn">
+            <button type="submit" class="button2">Registrarse</button>
+          </div>
+        </form>
+        <p style="color: white; text-align: center">
+          ¿Ya tienes cuenta?
+          <router-link to="/Login" style="color: #64b5f6">Iniciar Sesión</router-link>
+        </p>
+        <p v-if="errorMessage" class="error" style="color: red; text-align: center">{{ errorMessage }}</p>
+      </div>
+    </div>
+
+    <div class="image-side">
+      <img src="@/assets/fondo_login.jpg" alt="Imagen de registro" class="login-image" />
     </div>
   </div>
 </template>
+
+
 
 <script>
 import axios from 'axios';
@@ -113,88 +112,108 @@ export default {
   }
 };
 </script>
-
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
+.login-container {
+  display: flex;
+  height: 100vh;
+  background-color: #212121;
 }
 
-.register {
+.image-side {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: url('src/assets/fondopagina.webp') no-repeat center center;
-  background-size: cover;
+  overflow: hidden;
 }
 
-.form-container {
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.login-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-h2 {
-  text-align: center;
-  color: #333;
+.form-side {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.register-form {
+/* Estilos compartidos */
+.form {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-bottom: 0.4em;
+  background-color: #171717;
+  border-radius: 25px;
+  transition: 0.4s ease-in-out;
 }
-
-.input-field {
-  margin-bottom: 15px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  transition: border-color 0.3s;
+.form:hover {
+  transform: scale(1.05);
+  border: 1px solid black;
 }
-
-.input-field:focus {
-  border-color: #007bff;
+#heading {
+  text-align: center;
+  margin: 2em;
+  color: rgb(255, 255, 255);
+  font-size: 1.5em;
+}
+input {
+  margin-bottom: 1rem; /* o lo que se vea bien */
+}
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  border-radius: 25px;
+  padding: 0.6em;
+  border: none;
   outline: none;
+  color: white;
+  background-color: #171717;
+  box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
 }
-
-.password-container {
-  position: relative;
+.input-field {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: #d3d3d3;
 }
-
+.btn {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin-top: 2em;
+}
+.button2 {
+  padding: 0.5em 2.3em;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  transition: 0.4s ease-in-out;
+  background-color: #252525;
+  color: white;
+}
+.button2:hover {
+  background-color: black;
+  color: white;
+}
 .eye-button {
-  position: absolute;
-  right: 10px;
-  top: 10px;
   background: none;
   border: none;
   cursor: pointer;
-  color: #007bff;
-  font-size: 20px;
-}
-
-.submit-button {
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
   color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
 }
-
-.submit-button:hover {
-  background-color: #0056b3;
-}
-
-.error {
-  color: red;
-  margin-top: 10px;
-  text-align: center;
+.password-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.5em;
 }
 </style>

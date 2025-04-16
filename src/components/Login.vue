@@ -1,42 +1,53 @@
 <template>
-  <div class="login">
-    <div class="form-container">
-      <div class="login-header">
-        <h1>Iniciar Sesión</h1>
-      </div>
-      <form @submit.prevent="loginUser" class="login-form">
-        <input
-          v-model="username"
-          type="text"
-          placeholder="Correo electrónico"
-          class="input-field"
-          required
-        />
-        <div class="password-container">
+  <div class="login-container">
+    <div class="image-side">
+      <!-- Aquí puedes poner tu imagen -->
+      <img src="C:\Users\maria\OneDrive\Desktop\gestion\proyecto\src\assets\fondo_login.jpg" alt="Login Image" class="login-image" />
+    </div>
+
+    <div class="form-side">
+      <form class="form">
+        <p id="heading">Acceso</p>
+
+        <div class="field">
+          <svg class="input-icon" viewBox="0 0 20 20">
+            <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2..." />
+          </svg>
+          <input
+            v-model="username"
+            type="text"
+            class="input-field"
+            placeholder="Nombre de usuario"
+          />
+        </div>
+
+        <div class="field">
+          <svg class="input-icon" viewBox="0 0 20 20">
+            <path d="M10 2a4 4 0 00-4 4v2H5a2..." />
+          </svg>
           <input
             v-model="password"
-            :type="showPassword ? 'text' : 'password'"
-            placeholder="Contraseña"
+            type="password"
             class="input-field"
-            required
+            placeholder="Contraseña"
           />
-          <button type="button" class="toggle-password" @click="togglePasswordVisibility">
-            <span v-if="showPassword">🙈</span>
-            <span v-else>👁️</span>
-          </button>
         </div>
-        <button type="submit" class="submit-button">Iniciar Sesión</button>
+
+        <div class="btn">
+          <button class="button1" @click.prevent="loginUser">Acceso</button>
+          <button class="button2" type="button">Inscribirse</button>
+        </div>
+        <button class="button3" type="button">Has olvidado tu contraseña</button>
+
+        <p v-if="errorMessage" style="color: red; margin-top: 10px;">{{ errorMessage }}</p>
       </form>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      <div class="register-link">
-        <p>¿No tienes una cuenta? <a href="/register">Regístrate aquí</a></p>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { useUserStore } from '@/stores/user';
 
 export default {
   name: 'Login',
@@ -49,21 +60,22 @@ export default {
     };
   },
   methods: {
-    togglePasswordVisibility() {
-      this.showPassword = !this.showPassword; 
-    },
     async loginUser() {
       try {
-        const response = await axios.post('http://localhost:8000/login/', {
+        const response = await axios.post('http://localhost:8000/users/login', {
           username: this.username,
           password: this.password
         });
 
         if (response.data.message === 'Inicio de sesión exitoso') {
           const { user_id, name, token } = response.data;
+
           localStorage.setItem('user_id', user_id);
           localStorage.setItem('userName', name);
           localStorage.setItem('token', token);
+
+          const userStore = useUserStore();
+          userStore.login(name, token);
 
           this.$router.push('/landingPage');
         }
@@ -75,115 +87,127 @@ export default {
 };
 </script>
 
+
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
+.login-container {
+  display: flex;
+  height: 100vh;
+  background-color: #212121;
 }
 
-.login {
+.image-side {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: url('src/assets/fondopagina.webp') no-repeat center center;
-  background-size: cover;
+  overflow: hidden;
 }
 
-.login-header {
-  text-align: center;
-  margin-bottom: 20px;
+.login-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.login-header h1 {
-  color: white;
-  font-size: 2rem;
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
-}
-
-.form-container {
-  max-width: 500px; 
-  padding: 40px;
-  border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  width: 90%; 
-}
-
-.login-form {
+.form-side {
+  flex: 1;
   display: flex;
-  flex-direction: column;
-}
-
-.input-field {
-  margin-bottom: 20px;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s;
-  width: 95%; 
-}
-
-.input-field:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.password-container {
-  position: relative;
-  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
-.toggle-password {
-  position: absolute;
-  right: 10px;
+/* Aquí van los estilos que me compartiste */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-bottom: 0.4em;
+  background-color: #171717;
+  border-radius: 25px;
+  transition: 0.4s ease-in-out;
+}
+.form:hover {
+  transform: scale(1.05);
+  border: 1px solid black;
+}
+#heading {
+  text-align: center;
+  margin: 2em;
+  color: rgb(255, 255, 255);
+  font-size: 1.2em;
+}
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  border-radius: 25px;
+  padding: 0.6em;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #171717;
+  box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+}
+.input-icon {
+  height: 1.3em;
+  width: 1.3em;
+  fill: white;
+}
+.input-field {
   background: none;
   border: none;
-  font-size: 18px;
-  cursor: pointer;
+  outline: none;
+  width: 100%;
+  color: #d3d3d3;
 }
-
-.toggle-password:hover {
-  color: #007bff;
+.form .btn {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin-top: 2.5em;
 }
-
-.submit-button {
-  padding: 12px;
+.button1 {
+  padding: 0.5em 1.1em;
+  border-radius: 5px;
+  margin-right: 0.5em;
   border: none;
-  border-radius: 8px;
-  background-color: #007bff;
+  outline: none;
+  transition: 0.4s ease-in-out;
+  background-color: #252525;
   color: white;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background-color 0.3s;
 }
-
-.submit-button:hover {
-  background-color: #0056b3;
+.button1:hover {
+  background-color: black;
+  color: white;
 }
-
-.error {
-  color: red;
-  margin-top: 15px;
-  font-weight: bold;
+.button2 {
+  padding: 0.5em 2.3em;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  transition: 0.4s ease-in-out;
+  background-color: #252525;
+  color: white;
 }
-
-.register-link {
-  margin-top: 20px;
-  font-size: 0.9rem;
+.button2:hover {
+  background-color: black;
+  color: white;
 }
-
-.register-link a {
-  color: #007bff;
-  text-decoration: none;
+.button3 {
+  margin-bottom: 3em;
+  padding: 0.5em;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  transition: 0.4s ease-in-out;
+  background-color: #252525;
+  color: white;
 }
-
-.register-link a:hover {
-  text-decoration: underline;
+.button3:hover {
+  background-color: red;
+  color: white;
 }
 </style>
-

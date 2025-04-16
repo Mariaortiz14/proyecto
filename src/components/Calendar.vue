@@ -1,169 +1,246 @@
 <template>
-  <div class="fondo">
-    <div class="calendar-page">
-      <header class="calendar-header">
-        <h1>Mi Calendario</h1>
-        <p>Explora tus eventos programados:</p>
-      </header>
+  <div class="calendar-fondo">
+    <div class="calendar-wrapper">
+      <h1>Eventos futuros</h1>
 
-      <main class="calendar-container">
-        <vue-cal
-          class="vuecal"
-          :time="false"
-          default-view="month"
-          :events="calendarEvents"
-          @event-click="showEventDetails"
-          :on-event-overlap="false"
-        />
-      </main>
+      <div class="calendar-nav">
+        <button @click="prevMonth" :disabled="isCurrentMonth">←</button>
+        <span>{{ monthYear }}</span>
+        <button @click="nextMonth">→</button>
+      </div>
+
+      <div class="calendar-grid">
+        <div
+          v-for="day in daysInMonth"
+          :key="day.date"
+          class="calendar-day"
+          :class="{ 'has-event': day.events.length > 0 }"
+          @click="day.events.length && showEvents(day.events)"
+        >
+          <span class="day-number">{{ day.date.getDate() }}</span>
+          <ul v-if="day.events.length" class="event-list">
+            <li v-for="event in day.events.slice(0, 2)" :key="event.id">{{ event.title }}</li>
+            <li v-if="day.events.length > 2">+{{ day.events.length - 2 }} más</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import VueCal from "vue-cal";
-import "vue-cal/dist/vuecal.css";
+import axios from "axios";
 import Swal from "sweetalert2";
 
 export default {
   name: "CalendarView",
-  components: {
-    VueCal,
-  },
   data() {
+    const today = new Date();
     return {
-      calendarEvents: [
-        {
-          start: "2024-12-01T10:00:00+00:00",
-          end: "2024-12-01T12:00:00+00:00",
-          title: "Evento de prueba",
-          description: "Este es un evento de prueba.",
-        },
-        {
-          start: "2024-12-05T14:00:00+00:00",
-          end: "2024-12-05T16:00:00+00:00",
-          title: "Evento Test",
-          description: "Descripción del evento de prueba.",
-        },
-        {
-          start: "2024-12-10T18:00:00+00:00",
-          end: "2024-12-10T20:00:00+00:00",
-          title: "Reunión importante",
-          description: "Reunión de trabajo.",
-        },
-      ],
+      daysInMonth: [],
+      currentMonth: today.getMonth(),
+      currentYear: today.getFullYear(),
+      today,
+      isLoading: true,
     };
   },
+  computed: {
+    monthYear() {
+      const date = new Date(this.currentYear, this.currentMonth);
+      return date.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
+    },
+    isCurrentMonth() {
+      return (
+        this.currentMonth === this.today.getMonth() &&
+        this.currentYear === this.today.getFullYear()
+      );
+    },
+  },
   mounted() {
-    setTimeout(() => {
-      this.loadDynamicEvents();
-    }, 1000);
+    this.generateDays();
   },
   methods: {
-    loadDynamicEvents() {
-      const dynamicEvents = [
-        {
-          start: "2024-12-15T09:00:00+00:00",
-          end: "2024-12-15T10:30:00+00:00",
-          title: "Evento dinámico",
-          description: "Evento cargado dinámicamente.",
-        },
-        {
-          start: "2024-12-20T13:00:00+00:00",
-          end: "2024-12-20T15:00:00+00:00",
-          title: "Otra reunión",
-          description: "Reunión importante.",
-        },
-      ];
-      this.calendarEvents = [...this.calendarEvents, ...dynamicEvents];
+    async generateDays() {
+      this.isLoading = true;
+      const year = this.currentYear;
+      const month = this.currentMonth;
+      const days = new Date(year, month + 1, 0).getDate();
+
+      const dayArray = [];
+      for (let i = 1; i <= days; i++) {
+        dayArray.push({
+          date: new Date(year, month, i),
+          events: [],
+        });
+      }
+
+      try {
+        const response = await axios.get("http://localhost:8000/events/");
+        const events = response.data;
+
+        for (const event of events) {
+          const eventDate = new Date(event.event_date);
+          if (
+            eventDate.getFullYear() === year &&
+            eventDate.getMonth() === month
+          ) {
+            const dayIndex = eventDate.getDate() - 1;
+            if (dayArray[dayIndex]) {
+              dayArray[dayIndex].events.push(event);
+            }
+          }
+        }
+
+        this.daysInMonth = dayArray;
+      } catch (error) {
+        console.error("Error al cargar eventos:", error);
+        Swal.fire("Error", "No se pudieron cargar los eventos.", "error");
+      } finally {
+        this.isLoading = false;
+      }
     },
-    showEventDetails(event) {
+    showEvents(events) {
+      const html = events
+        .map(
+          (e) =>
+            `<p><strong>${e.title}</strong><br>${e.description || "Sin descripción"}<br><small>${new Date(
+              e.event_date
+            ).toLocaleDateString("es-ES")}</small></p>`
+        )
+        .join("<hr>");
+
       Swal.fire({
-        title: event.title,
-        html: `<p><strong>Fecha:</strong> ${this.formatDate(
-          event.start
-        )}</p><p>${event.description || "Sin descripción"}</p>`,
+        title: `Eventos (${events.length})`,
+        html,
         icon: "info",
+        width: 600,
         confirmButtonText: "Cerrar",
+        background: "#1f1f1f",
+        color: "#fff"
       });
     },
-    formatDate(date) {
-      const options = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-      };
-      return new Date(date).toLocaleDateString("es-ES", options);
+    nextMonth() {
+      if (this.currentMonth === 11) {
+        this.currentMonth = 0;
+        this.currentYear++;
+      } else {
+        this.currentMonth++;
+      }
+      this.generateDays();
+    },
+    prevMonth() {
+      if (!this.isCurrentMonth) {
+        if (this.currentMonth === 0) {
+          this.currentMonth = 11;
+          this.currentYear--;
+        } else {
+          this.currentMonth--;
+        }
+        this.generateDays();
+      }
     },
   },
 };
 </script>
 
+
 <style>
-.fondo {
-  background: rgb(77, 77, 77);
-  background: linear-gradient(
-    0deg,
-    rgba(77, 77, 77, 1) 0%,
-    rgba(140, 168, 255, 1) 19%,
-    rgba(189, 137, 254, 1) 60%,
-    rgba(252, 244, 244, 1) 90%
-  );
+.calendar-fondo {
+  background: radial-gradient(circle at center, #1f1f1f 0%, #000000 100%);
   min-height: 100vh;
+  padding: 40px 0;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: flex-start;
 }
 
-.calendar-page {
+.calendar-wrapper {
+  max-width: 800px;
+  width: 100%;
+  background: linear-gradient(135deg, #ffbc00, #ff0058);
   padding: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 1.5em;
+  box-shadow: 0 0 30px rgba(255, 0, 88, 0.4);
+  color: #fff;
+  transition: transform 0.3s ease;
 }
 
-.calendar-header {
-  text-align: center;
+.calendar-wrapper:hover {
+  transform: translateY(-10px);
+}
+
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
-}
-
-.calendar-header h1 {
-  color: #333;
-  font-size: 2.5rem;
-}
-
-.calendar-header p {
   font-size: 1.2rem;
-  color: #555;
 }
 
-.calendar-container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.vuecal {
-  height: 600px;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.vuecal .vuecal__cell--current-day {
-  background-color: #e3f2fd;
-}
-
-.vuecal .vuecal__event {
-  background-color: #007bff;
+.calendar-nav button {
+  background-color: #ff0058;
+  border: none;
   color: white;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-.vuecal .vuecal__event:hover {
-  background-color: #0056b3;
+.calendar-nav button:hover {
+  background-color: #e6004e;
 }
+
+.calendar-nav button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 días de la semana */
+  gap: 10px;
+}
+
+.calendar-day {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  padding: 10px;
+  height: 100px;
+  position: relative;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s;
+  overflow: hidden;
+}
+
+.calendar-day:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+.calendar-day.has-event {
+  border: 2px solid #fff;
+}
+
+.day-number {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #ffd;
+}
+
+.event-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 6px;
+}
+
+.event-list li {
+  font-size: 0.7rem;
+  color: #ffe;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 </style>

@@ -1,61 +1,42 @@
 <template>
-  <div class="fondo">
-    <div class="edit-profile">
+  <div class="editprofile-fondo">
+    <div class="editprofile-wrapper">
       <h1>Editar Perfil</h1>
 
-      <div class="profile-image">
-        <img :src="imageUrl || defaultProfileImage" alt="Foto de perfil" width="100" />
-        <label for="profile-image" class="upload-label">Cambiar Foto</label>
-        <input
-          type="file"
-          id="profile-image"
-          @change="handleImageUpload"
-          accept="image/*"
-          hidden
-        />
-      </div>
-
-      <form @submit.prevent="submitForm">
-        <section class="section">
+      <form @submit.prevent="confirmAndSubmit">
+        <section class="editprofile-section">
           <h2>Información Personal</h2>
-          <div class="form-group">
-            <label for="first-name">Nombre</label>
-            <input type="text" id="first-name" v-model="profile.firstName" required />
+
+          <div class="editprofile-group">
+            <label for="name">Nombre</label>
+            <input type="text" id="name" v-model="profile.name" />
           </div>
-          <div class="form-group">
-            <label for="last-name">Apellido</label>
-            <input type="text" id="last-name" v-model="profile.lastName" required />
+
+          <div class="editprofile-group">
+            <label for="surname">Apellido</label>
+            <input type="text" id="surname" v-model="profile.surname" />
           </div>
-          <div class="form-group">
+
+          <div class="editprofile-group">
             <label for="email">Correo Electrónico</label>
-            <input type="email" id="email" v-model="profile.email" required />
+            <input type="email" id="email" v-model="profile.email" />
+          </div>
+
+          <div class="editprofile-group">
+            <label for="phone">Teléfono</label>
+            <input type="text" id="phone" v-model="profile.phone" />
           </div>
         </section>
 
-        <section class="section">
-          <h2>Cambiar Contraseña</h2>
-          <div class="form-group">
-            <label for="current-password">Contraseña Actual</label>
-            <input type="password" id="current-password" v-model="profile.currentPassword" />
-          </div>
-          <div class="form-group">
-            <label for="new-password">Nueva Contraseña</label>
-            <input type="password" id="new-password" v-model="profile.newPassword" />
-          </div>
-          <div class="form-group">
-            <label for="confirm-password">Confirmar Contraseña</label>
-            <input type="password" id="confirm-password" v-model="profile.confirmPassword" />
-          </div>
-        </section>
-
-        <div class="actions">
-          <button type="submit" class="btn-primary">Guardar Cambios</button>
-          <button type="button" class="btn-secondary" @click="resetForm">Cancelar</button>
+        <div class="editprofile-actions">
+          <button type="submit" class="editprofile-btn-primary">Guardar Cambios</button>
+          <button type="button" class="editprofile-btn-secondary" @click="resetForm">Cancelar</button>
         </div>
       </form>
     </div>
   </div>
 </template>
+
 
 <script>
 import Swal from "sweetalert2";
@@ -65,16 +46,11 @@ export default {
   data() {
     return {
       profile: {
-        firstName: "",
-        lastName: "",
+        name: "",
+        surname: "",
         email: "",
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-        image: null,
-      },
-      imageUrl: null,
-      defaultProfileImage: "C:/Nur_Derly/gestion/proyecto/src/assets/perfil-por-defecto.png",
+        phone: ""
+      }
     };
   },
   mounted() {
@@ -93,10 +69,10 @@ export default {
         const response = await fetch(`http://localhost:8000/users/${userId}`);
         if (response.ok) {
           const data = await response.json();
-          this.profile.firstName = data.firstName || "";
-          this.profile.lastName = data.lastName || "";
+          this.profile.name = data.firstName || "";
+          this.profile.surname = data.lastName || "";
           this.profile.email = data.email || "";
-          this.imageUrl = data.image || this.defaultProfileImage;
+          this.profile.phone = data.phone || "";
         } else {
           Swal.fire("Error", "No se pudo cargar el perfil del usuario.", "error");
         }
@@ -104,36 +80,62 @@ export default {
         Swal.fire("Error", "Ocurrió un problema al conectar con el servidor.", "error");
       }
     },
-    async submitForm() {
+
+    async confirmAndSubmit() {
+      // Validar que no estén vacíos
+      if (
+        !this.profile.name.trim() &&
+        !this.profile.surname.trim() &&
+        !this.profile.email.trim() &&
+        !this.profile.phone.trim()
+      ) {
+        Swal.fire("Advertencia", "Debes llenar al menos un campo antes de continuar.", "warning");
+        return;
+      }
+
+      // SweetAlert para ingresar la contraseña
+      const { value: password } = await Swal.fire({
+        title: "Confirmación de cambios",
+        text: "Ingresa tu contraseña actual para confirmar los cambios",
+        input: "password",
+        inputLabel: "Contraseña actual",
+        inputPlaceholder: "Escribe tu contraseña",
+        inputAttributes: {
+          maxlength: 100,
+          autocapitalize: "off",
+          autocorrect: "off"
+        },
+        showCancelButton: true,
+        confirmButtonText: "Confirmar",
+        cancelButtonText: "Cancelar"
+      });
+
+      if (!password) {
+        Swal.fire("Cancelado", "No se realizaron cambios.", "info");
+        return;
+      }
+
+      this.submitForm(password);
+    },
+
+    async submitForm(currentPassword) {
       const userId = localStorage.getItem("user_id");
-      if (!userId) {
-        Swal.fire("Error", "Usuario no autenticado.", "error");
-        return;
-      }
 
-      if (this.profile.newPassword && this.profile.newPassword !== this.profile.confirmPassword) {
-        Swal.fire("Error", "Las contraseñas no coinciden.", "error");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("firstName", this.profile.firstName);
-      formData.append("lastName", this.profile.lastName);
-      formData.append("email", this.profile.email);
-
-      if (this.profile.currentPassword && this.profile.newPassword) {
-        formData.append("currentPassword", this.profile.currentPassword);
-        formData.append("newPassword", this.profile.newPassword);
-      }
-
-      if (this.profile.image) {
-        formData.append("file", this.profile.image);
-      }
+      const payload = {
+        name: this.profile.name,
+        surname: this.profile.surname,
+        email: this.profile.email,
+        phone: this.profile.phone,
+        currentPassword: currentPassword
+      };
 
       try {
         const response = await fetch(`http://localhost:8000/users/${userId}/profile`, {
           method: "PUT",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
         });
 
         const responseData = await response.json();
@@ -147,188 +149,103 @@ export default {
         Swal.fire("Error", "Ocurrió un problema al conectar con el servidor.", "error");
       }
     },
+
     resetForm() {
       this.loadUserProfile();
-    },
-    handleImageUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.imageUrl = URL.createObjectURL(file); // Crea la vista previa
-        console.log("Vista previa generada:", this.imageUrl);
-
-      }
-    },
-  },
+    }
+  }
 };
 </script>
+
 <style>
-.fondo {
-  background: linear-gradient(0deg, #4d4d4d 0%, #8ca8ff 19%, #bd89fe 60%, #fcf4f4 90%);
+.editprofile-fondo {
+  background: radial-gradient(circle at center, #1f1f1f 0%, #000000 100%);
   min-height: 100vh;
+  padding: 40px 0;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: flex-start;
 }
 
-.edit-profile {
-  max-width: 800px;
-  padding: 40px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  font-family: 'Roboto', sans-serif;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  justify-content: center;
-}
-
-.profile-image {
-  text-align: center;
-  margin-bottom: 20px;
-  flex: 1 1 150px;
-}
-
-.profile-image img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 5px solid #8ca8ff;
-}
-
-.upload-label {
-  display: inline-block;
-  margin-top: 10px;
-  color: #007bff;
-  cursor: pointer;
-}
-
-.upload-label:hover {
-  text-decoration: underline;
-}
-
-h1 {
-  font-size: 2.5em;
-  text-align: center;
-  color: #333;
-  margin-bottom: 20px;
+.editprofile-wrapper {
+  max-width: 600px;
   width: 100%;
+  background: linear-gradient(135deg, #ffbc00, #ff0058);
+  padding: 20px;
+  border-radius: 1.5em;
+  box-shadow: 0 0 30px rgba(255, 0, 88, 0.4);
+  color: #fff;
+  transition: transform 0.3s ease;
 }
 
-h2 {
-  font-size: 1.5em;
-  color: #555;
-  margin-bottom: 10px;
+.editprofile-wrapper:hover {
+  transform: translateY(-10px);
 }
 
-.form-group {
+.editprofile-section {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  border-radius: 1em;
   margin-bottom: 20px;
-  width: 100%;
 }
 
-label {
+.editprofile-section h2 {
+  margin-bottom: 15px;
+  color: #fffbe7;
+}
+
+.editprofile-group {
+  margin-bottom: 15px;
+}
+
+.editprofile-group label {
   display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #333;
+  margin-bottom: 6px;
+  color: #ffd;
+  font-weight: 500;
 }
 
-input {
+.editprofile-group input {
   width: 100%;
-  padding: 15px;
-  font-size: 1em;
-  border: 1px solid #ccc;
+  padding: 10px;
   border-radius: 8px;
-  box-sizing: border-box;
-  margin-top: 5px;
-  transition: all 0.3s ease-in-out;
-}
-
-input:focus {
-  border-color: #8ca8ff;
-  box-shadow: 0 0 8px rgba(140, 168, 255, 0.6);
-  outline: none;
-}
-
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  width: 100%;
-  margin-top: 30px;
-}
-
-.btn-primary {
-  background-color: #a828d2;
-  color: white;
-  padding: 15px 30px;
   border: none;
-  cursor: pointer;
-  border-radius: 50px;
-  font-size: 1em;
-  transition: background-color 0.3s;
+  background-color: #222;
+  color: #fff;
+  font-size: 1rem;
 }
 
-.btn-primary:hover {
-  background-color: #218838;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-  padding: 15px 30px;
-  border: none;
-  cursor: pointer;
-  border-radius: 50px;
-  font-size: 1em;
-  transition: background-color 0.3s;
-}
-
-.btn-secondary:hover {
-  background-color: #5a6268;
-}
-
-.profile-info {
+.editprofile-actions {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
-  width: 100%;
+  margin-top: 20px;
 }
 
-.profile-info .form-group {
-  flex: 1 1 45%; 
-  margin-right: 30px;
-  margin-bottom: 20px;
+.editprofile-btn-primary,
+.editprofile-btn-secondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-.profile-info .form-group:last-child {
-  margin-right: 0;
+.editprofile-btn-primary {
+  background-color: #ff0058;
+  color: white;
 }
 
-.profile-info .form-group input {
-  padding: 15px;
-  border-radius: 8px;
+.editprofile-btn-primary:hover {
+  background-color: #e6004e;
 }
 
-@media (max-width: 768px) {
-  .profile-info .form-group {
-    flex: 1 1 100%; 
-    margin-right: 0;
-  }
-
-  .edit-profile {
-    padding: 20px;
-    gap: 20px;
-  }
-
-  .profile-image img {
-    width: 120px;
-    height: 120px;
-  }
-
-  .actions {
-    flex-direction: column;
-  }
+.editprofile-btn-secondary {
+  background-color: #555;
+  color: white;
 }
+
+.editprofile-btn-secondary:hover {
+  background-color: #444;
+}
+
 </style>

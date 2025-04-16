@@ -1,26 +1,42 @@
-<template> 
-  <header>
+<template>
+  <header class="main-header">
     <div class="header-content">
-      <img
-        src="C:\Nur_Derly\gestion\proyecto\src\assets\Lootipo-Happenit-2.0.png"
-        alt="Happenit Logo"
-        class="logo"
-      />
-      <nav>
+      <!-- Logo -->
+      <div class="logo-container">
+        <router-link to="/landingPage">
+          <img src="C:\Users\maria\OneDrive\Desktop\gestion\proyecto\src\assets\image.png" alt="Happenit Logo" class="logo" />
+        </router-link>
+      </div>
+
+      <!-- Buscador -->
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Buscar eventos..."
+          @input="emitSearch"
+        />
+        <i class="fas fa-map-marker-alt location-icon"></i>
+        <span class="location-label">Bogotá</span>
+        <button class="search-btn" @click="emitSearch">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+
+      <!-- Enlaces de navegación -->
+      <nav class="nav-links">
         <ul>
-          <li v-if="isLoggedIn"><router-link to="/landingPage">Inicio</router-link></li>
-          <li v-if="isLoggedIn"><router-link to="/edit-profile">Ver perfil</router-link></li>
-          <li v-if="isLoggedIn"><router-link to="/my-events">Mis Eventos</router-link></li>
-          <li v-if="isLoggedIn"><router-link to="/calendar">Calendario</router-link></li>
+          <li><router-link to="/landingPage">Inicio</router-link></li>
+          <li><router-link to="/edit-profile">Ver Perfil</router-link></li>
+          <li><router-link to="/my-events">Mis Eventos</router-link></li>
+          <li><router-link to="/calendar">Calendario</router-link></li>
+          <li><router-link to="/pqr">PQR</router-link></li>
           <li v-if="!isLoggedIn"><router-link to="/login">Iniciar sesión</router-link></li>
           <li v-if="!isLoggedIn"><router-link to="/register">Registrarse</router-link></li>
           <li v-if="isLoggedIn"><a @click="logout">Cerrar sesión</a></li>
         </ul>
       </nav>
-      <div class="search-bar">
-        <input type="text" v-model="searchQuery" placeholder="Buscar eventos..." />
-        <button @click="searchEvents">Buscar</button>
-      </div>
     </div>
   </header>
 </template>
@@ -31,7 +47,7 @@ export default {
   data() {
     return {
       isLoggedIn: false,
-      searchQuery: '',
+      searchQuery: ''
     };
   },
   mounted() {
@@ -39,86 +55,122 @@ export default {
   },
   methods: {
     checkLoginStatus() {
-      const token = localStorage.getItem('token');
-      this.isLoggedIn = !!token;
+      this.isLoggedIn = !!localStorage.getItem('token');
     },
     logout() {
       localStorage.removeItem('token');
       this.isLoggedIn = false;
-      this.$router.push('/login'); 
+      this.$router.push('/landingPage');
     },
-    searchEvents() {
-      console.log('Buscar eventos:', this.searchQuery);
+    emitSearch() {
+      this.$emit('search', this.searchQuery);
     }
-  },
+  }
 };
 </script>
 
 <style>
+.main-header {
+  background-color: #121212;
+  width: 100%;
+  padding: 16px 40px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+}
+
 .header-content {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
-  background: rgb(0,0,0);
-  background: linear-gradient(90deg, rgba(0,0,0,1) 22%, rgba(44,20,37,1) 38%, rgba(44,20,37,1) 39%, rgba(199,88,165,1) 60%, rgba(255,0,125,1) 82%);
-  color: white;
-  width: 100%;
-  box-sizing: border-box;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.logo {
-  width: 100px;
-  flex-shrink: 0; 
+.logo-container .logo {
+  height: 80px;
 }
 
-nav ul {
+.search-container {
   display: flex;
-  gap: 20px; 
+  align-items: center;
+  background-color: #1e1e1e;
+  border-radius: 9999px;
+  padding: 8px 16px;
+  flex: 1;
+  max-width: 600px;
+  min-width: 300px;
+  color: white;
+}
+
+.search-container input {
+  background: transparent;
+  border: none;
+  outline: none;
+  flex: 1;
+  color: white;
+  margin: 0 8px;
+  font-size: 14px;
+}
+
+.search-container .search-icon,
+.search-container .location-icon {
+  color: #ccc;
+}
+
+.search-container .location-label {
+  color: #ccc;
+  font-size: 13px;
+  margin-left: 4px;
+}
+
+.search-btn {
+  background-color: #e74c3c;
+  border: none;
+  border-radius: 50%;
+  padding: 6px;
+  color: white;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.nav-links ul {
   list-style: none;
+  display: flex;
+  gap: 20px;
   padding: 0;
   margin: 0;
+  align-items: center;
 }
 
-nav a {
+.nav-links a {
   color: white;
   text-decoration: none;
-  font-size: 18px;
-  font-weight: bold; 
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s;
 }
 
-nav a:hover {
-  text-decoration: underline;
+.nav-links a:hover {
+  color: #e74c3c;
 }
 
-.search-bar {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0; 
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-.search-bar input {
-  padding: 10px 15px;
-  font-size: 16px;
-  border-radius: 5px 0 0 5px; 
-  border: 1px solid #ccc;
-  width: 250px; 
-  box-sizing: border-box; 
-}
+  .search-container {
+    width: 100%;
+    margin-top: 12px;
+  }
 
-.search-bar button {
-  padding: 10px 20px;
-  background-color: #a828d2;
-  color: white;
-  border: none;
-  border-radius: 5px 5px 5px 0;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  box-sizing: border-box; 
-}
-
-.search-bar button:hover {
-  background-color: #0056b3;
+  .nav-links ul {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 }
 </style>

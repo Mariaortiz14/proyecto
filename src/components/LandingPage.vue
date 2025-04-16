@@ -1,33 +1,59 @@
 <template>
-  <div class="landing-page">
-    <h1>Bienvenido, {{ username }}</h1>
-
-    <div class="carousel">
-      <div v-for="(image, index) in carouselImages" :key="index" class="carousel-item" :style="index === currentSlide ? {} : {display: 'none'}">
-        <img :src="image.src" :alt="image.alt" />
-        <div class="carousel-caption">{{ image.caption }}</div>
+  <div class="landing-container">
+    <section class="hero-section">
+      <div class="hero-text-background">
+        <div class="hero-text">
+          <h2><span class="highlight">Haz lo que</span><br /><strong>te apasiona</strong></h2>
+        </div>
       </div>
-    </div>
-
+      <div class="hero-image-container">
+        <img src="C:\Users\maria\OneDrive\Desktop\gestion\proyecto\src\assets\Concierto.png" alt="Concierto" class="hero-image" />
+        <div class="caption">Superorganism en Great American Music Hall</div>
+      </div>
+    </section>
     <div class="categories">
-      <h2>Categorías</h2>
       <div class="category-list">
-        <div v-for="category in categories" :key="category.id" class="category-card">
+        <div
+          v-for="category in categories"
+          :key="category.id"
+          class="category-card"
+          @click="filterByCategory(category.name)"
+        >
           <img :src="category.image" :alt="category.name" />
           <h3>{{ category.name }}</h3>
         </div>
       </div>
     </div>
 
+    <!-- Mostrar todos los eventos -->
+    <div v-if="selectedCategory" class="show-all">
+      <p>Mostrando eventos de la categoría: <strong>{{ selectedCategory }}</strong></p>
+      <button @click="fetchEvents">Ver todos los eventos</button>
+    </div>
+
+    <!-- Eventos -->
     <div class="favorites">
       <h2>¡Eventos Disponibles!</h2>
-      <p class="par">Explora los ultimos eventos</p>
       <div class="favorite-list">
-        <div v-for="event in favoriteEvents" :key="event.id" class="favorite-card">
-          <h3>{{ event.title || "Sin título" }}</h3>
-          <p>{{ event.description || "Sin descripción" }}</p>
-          <p><strong>Publicado por:</strong> {{ event.user?.name || "Desconocido" }} ({{ event.user?.email || "Correo no disponible" }})</p>
-          <button @click="goToEventDetail(event)">Ver más</button>
+        <div
+          v-if="favoriteEvents.length"
+          v-for="event in favoriteEvents"
+          :key="event.id"
+          class="wallet-card"
+        >
+          <div class="wallet-icon">
+            <svg width="48" height="48" fill="#fff" viewBox="0 0 24 24">
+              <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4z" />
+            </svg>
+            <div class="circle-bg"></div>
+          </div>
+          <h3 class="event-title">{{ event.title || "Sin título" }}</h3>
+          <p class="event-description">{{ event.description || "Sin descripción" }}</p>
+          <button class="wallet-button" @click="goToEventDetail(event)">Ver más</button>
+        </div>
+
+        <div v-else class="no-events">
+          <p>No se encontraron eventos para esta categoría.</p>
         </div>
       </div>
     </div>
@@ -35,209 +61,283 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
+
+// Importación de imágenes para categorías
+import tapas from "@/assets/tapas.gif";
+import juegos from "@/assets/consola-de-videojuegos.gif";
+import musica from "@/assets/carrera-de-relevos.gif";
+import cantar from "@/assets/festival.gif";
+import baile from "@/assets/musica.gif";
+import teatro from "@/assets/musica.gif";
+import conciertoHero from "@/assets/Concierto.png";
 
 export default {
   name: "LandingPage",
   data() {
     return {
-      username: localStorage.getItem('userName') || 'Invitado',
-      currentSlide: 0,
-      carouselImages: [
-        {
-          src: "src/assets/imagen1.jpeg",
-          alt: "Imagen 1",
-          caption: "Descubre eventos increíbles cerca de ti",
-        },
-        {
-          src: "src/assets/imagen2.jpeg",
-          alt: "Imagen 2",
-          caption: "Explora las mejores categorías de eventos",
-        },
-        {
-          src: "src/assets/WhatsApp Image 2024-11-23 at 2.52.46 PM.jpeg",
-          alt: "Imagen 3",
-          caption: "Eventos personalizados para ti",
-        },
-      ],
+      username: localStorage.getItem("userName") || "Invitado",
+      selectedCategory: null,
       categories: [
-        { id: 1, name: "Gastronomía", image: "src/assets/comida.png" },
-        { id: 2, name: "Conferencias", image: "src/assets/juegos.png" },
-        { id: 3, name: "Deportes", image: "src/assets/musica.png" },
-        { id: 4, name: "Festivales", image: "src/assets/cantar.png" },
-        { id: 5, name: "Conciertos", image: "src/assets/baile.png" },
-        { id: 6, name: "Teatro", image: "src/assets/teatro.png" },
+        { id: 1, name: "Gastronomía", image: tapas },
+        { id: 2, name: "Conferencias", image: juegos },
+        { id: 3, name: "Deportes", image: musica },
+        { id: 4, name: "Festivales", image: cantar },
+        { id: 5, name: "Conciertos", image: baile },
+        { id: 6, name: "Teatro", image: teatro },
       ],
-      favoriteEvents: []  
+      favoriteEvents: [],
+      heroImage: conciertoHero,
     };
   },
   mounted() {
     this.fetchEvents();
-    setInterval(this.nextSlide, 3000); 
   },
   methods: {
     async fetchEvents() {
       try {
-        const response = await axios.get("http://localhost:8000/events", { params: { limit: 8 } });
+        const response = await axios.get("http://localhost:8000/events/", {
+          params: { limit: 50 },
+        });
         this.favoriteEvents = response.data;
-        console.log("Eventos cargados:", this.favoriteEvents);
+        this.selectedCategory = null;
       } catch (error) {
-        console.error("Error al cargar los eventos:", error);
+        console.error("Error al cargar eventos:", error);
+      }
+    },
+    async filterByCategory(categoryName) {
+      try {
+        const response = await axios.get("http://localhost:8000/events/", {
+          params: { category: categoryName },
+        });
+        this.favoriteEvents = response.data;
+        this.selectedCategory = categoryName;
+      } catch (error) {
+        console.error("Error al filtrar eventos:", error);
       }
     },
     goToEventDetail(event) {
       this.$router.push(`/guest-event/${event.id}`);
     },
-    nextSlide() {
-      this.currentSlide = (this.currentSlide + 1) % this.carouselImages.length;
-    }
-  }
+  },
 };
 </script>
 
-<style>
-.landing-page {
-  font-family: Arial, sans-serif;
+
+<style >
+.landing-container {
+  font-family: 'Arial', sans-serif;
   padding: 20px;
-  background: rgb(77,77,77);
-  background: linear-gradient(0deg, rgba(77,77,77,1) 0%, rgba(140,168,255,1) 19%, rgba(189,137,254,1) 60%, rgba(252,244,244,1) 90%);
+  background: rgb(0,0,0);
+  background: linear-gradient(90deg, rgba(0,0,0,1) 22%, rgba(44,20,37,1) 38%, rgba(44,20,37,1) 39%, rgba(199,88,165,1) 60%, rgba(255,0,125,1) 82%);
 }
 
-.carousel {
-  width: 100%;
-  height: 400px; 
+/* HERO SECTION */
+.hero-section {
+  display: flex;
+  align-items: stretch;
+  height: 80vh;
+  margin-bottom: 40px;
+  overflow: hidden;
+}
+
+.hero-text-background {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.hero-text h2 {
+  font-size: 3.5rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.highlight {
+  color: #e95441;
+  font-weight: bold;
+}
+
+.hero-image-container {
+  flex: 1;
   position: relative;
   overflow: hidden;
 }
 
-.carousel-item {
-  position: absolute;
+.hero-image {
   width: 100%;
   height: 100%;
-  transition: opacity 1s ease-in-out;
+  object-fit: cover;
 }
 
-.carousel-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; 
-}
-
-.carousel-caption {
+.caption {
   position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: white;
-  font-size: 1.5rem;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 10px 20px;
+  bottom: 15px;
+  left: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 5px;
+}
+h1{
+  color:#fff
 }
 
-
+/* CATEGORÍAS */
 .categories h2 {
-  font-size: 3rem;
-  margin-bottom: 30px;
-  color: #333;
-  padding: 20px 20px;
-}
-.par{
-  display: flex;
-  justify-content: center;
-  font-size: 25px;
-  color: #333;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #ffffff;
+  padding: 10px 20px;
 }
 
 .category-list {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .category-card {
-  width: 170px;
+  width: 160px;
   text-align: center;
   padding: 15px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+  
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.category-card:hover {
+  transform: scale(1.05);
 }
 
 .category-card img {
-  width: 60%;
-  border-radius: 10px;
+  width: 70%;
+  border-radius: 8px;
   margin-bottom: 10px;
   transition: transform 0.3s ease-in-out;
 }
 
 .category-card h3 {
-  font-size: 1.2rem;
-  color: #555;
+  font-size: 1.1rem;
+  color: #444;
 }
 
-.category-card:hover img {
-  transform: scale(1.1);
-}
-
-
+/* EVENTOS */
 .favorites h2 {
   font-size: 2rem;
+  color: #fffefe;
+  padding: 20px;
+  text-align: center;
+}
+
+.par {
+  font-size: 1.2rem;
+  text-align: center;
+  color: #ffffff;
   margin-bottom: 20px;
-  color: #333;
-  padding: 20px 20px;
 }
 
 .favorite-list {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  padding: 20px 20px;
   justify-content: center;
 }
 
-.favorite-card {
-  width: 250px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px 20px;
+/* TARJETAS ESTILO WALLET */
+.wallet-card {
+  background: rgb(240, 234, 234);
+  border-radius: 1rem;
+  padding: 2rem 1rem;
+  width: 260px;
+  margin: 1rem;
   text-align: center;
-  background: #f9f9f9;
-  transition: box-shadow 0.3s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
-.favorite-card:hover {
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+.wallet-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
-.favorite-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 10px;
+.wallet-icon {
+  position: relative;
+  margin-bottom: 1rem;
 }
 
-.favorite-card h3 {
-  font-size: 1.5rem;
-  color: #444;
+.wallet-icon svg {
+  position: relative;
+  z-index: 2;
 }
 
-.favorite-card p {
-  font-size: 1rem;
-  color: #666;
+.circle-bg {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background-color: #d3b9f3;
+  border-radius: 50%;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
 }
 
-.favorite-card button {
-  padding: 10px 30px;
-  background-color: #a828d2;
+.event-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-description {
+  font-size: 0.95rem;
+  color: #555;
+  height: 3em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wallet-button {
+  margin-top: 1rem;
+  background: linear-gradient(90deg, #b620e0, #7c26f8);
   color: white;
+  padding: 0.5rem 1.2rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: bold;
+  transition: background 0.3s ease;
 }
 
-.favorite-card button:hover {
-  background-color: #0056b3;
+.wallet-button:hover {
+  background: linear-gradient(90deg, #7c26f8, #b620e0);
+}
+
+/* OTROS */
+.show-all {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.no-events {
+  font-size: 1rem;
+  color: #777;
+  text-align: center;
+  margin-top: 2rem;
 }
 </style>
+
 
 
 
