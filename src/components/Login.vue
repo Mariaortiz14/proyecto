@@ -59,9 +59,7 @@ export default {
   methods: {
     async loginUser() {
       try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/users/login`,
-          {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, {
             username: this.username,
             password: this.password
           }
