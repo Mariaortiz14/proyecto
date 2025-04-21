@@ -59,6 +59,7 @@ export default {
   try {
     const url = `${import.meta.env.VITE_API_URL}/users/${userId}/events`;
     console.log("URL de solicitud:", url); 
+    console.log(import.meta.env.VITE_API_URL)
 
     const response = await axios.get(url, {
       headers: {
@@ -69,6 +70,8 @@ export default {
   } catch (error) {
     console.error("Error al cargar los eventos:", error);
     Swal.fire("Error", "Hubo un error al cargar tus eventos.", "error");
+    console.log("URL de solicitud:", url); 
+    console.log(import.meta.env.VITE_API_URL)
   }
   },
 
