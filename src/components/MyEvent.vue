@@ -58,7 +58,7 @@ export default {
 
   try {
     const url = `${import.meta.env.VITE_API_URL}/users/${userId}/events`;
-    console.log("URL de solicitud:", url);  // Verificar la URL generada
+    console.log("URL de solicitud:", url); 
 
     const response = await axios.get(url, {
       headers: {
