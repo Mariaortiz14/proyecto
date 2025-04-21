@@ -71,7 +71,7 @@ export default {
       }
 
       try {
-        const response = await fetch(`http://localhost:8000/users/${userId}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}`);
         if (response.ok) {
           const data = await response.json();
           this.profile.name = data.firstName || "";
@@ -137,7 +137,7 @@ export default {
       };
 
       try {
-        const response = await fetch(`http://localhost:8000/users/${userId}/profile`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}/profile`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json"
