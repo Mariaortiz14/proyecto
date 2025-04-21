@@ -63,8 +63,6 @@
   </div>
 </template>
 
-
-
 <script>
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -99,9 +97,8 @@ export default {
           return;
         }
 
-        const response = await axios.post('http://localhost:8000/users/', this.registerForm);
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/`, this.registerForm);
         Swal.fire('Éxito', 'Registro exitoso', 'success');
-        
       
         this.$router.push('/Login');
       } catch (error) {
@@ -112,6 +109,7 @@ export default {
   }
 };
 </script>
+
 <style>
 .login-container {
   display: flex;
