@@ -91,7 +91,7 @@ export default {
     async fetchEventDetails() {
       const eventId = this.$route.params.id;
       try {
-        const response = await axios.get(`http://localhost:8000/events/${eventId}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/${eventId}`);
         this.event = response.data;
       } catch (error) {
         console.error("Error al cargar los detalles del evento:", error);
@@ -109,7 +109,7 @@ export default {
 
       try {
         await axios.put(
-          `http://localhost:8000/events/${eventId}`,
+          `${import.meta.env.VITE_API_URL}/events/${eventId}`,
           {
             title: this.event.title,
             description: this.event.description,
