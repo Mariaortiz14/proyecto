@@ -1,21 +1,21 @@
 <template>
-<div class="eventDetail">
-  <div class="card">
-    <span>
-      <div class="content">
-        <div class="event-detail">
-          <h1>{{ event.title }}</h1>
-          <p><strong>Publicado por:</strong> {{ event.user?.name || 'Anónimo' }}</p>
-          <p><strong>Descripción:</strong> {{ event.description }}</p>
-          <p><strong>Fecha:</strong> {{ formattedDate }}</p>
-          <p><strong>Lugar:</strong> {{ event.location }}</p>
-          <p><strong>Categoría:</strong> {{ event.category }}</p>
+  <div class="eventDetail">
+    <div class="card">
+      <span>
+        <div class="content">
+          <div class="event-detail">
+            <h1>{{ event.title }}</h1>
+            <p><strong>Publicado por:</strong> {{ event.user?.name || 'Anónimo' }}</p>
+            <p><strong>Descripción:</strong> {{ event.description }}</p>
+            <p><strong>Fecha:</strong> {{ formattedDate }}</p>
+            <p><strong>Lugar:</strong> {{ event.location }}</p>
+            <p><strong>Categoría:</strong> {{ event.category }}</p>
+          </div>
         </div>
-      </div>
-    </span>
-    <Comments :eventId="event.id" />
+      </span>
+      <Comments :eventId="event.id" />
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -43,7 +43,7 @@ export default {
     const eventId = this.$route.params.id
 
     axios
-      .get(`http://localhost:8000/events/${eventId}`)
+      .get(`${import.meta.env.VITE_API_URL}/events/${eventId}`)
       .then((response) => {
         this.event = response.data
         console.log('Evento cargado:', this.event)
