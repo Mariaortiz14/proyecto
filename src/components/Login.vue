@@ -1,7 +1,6 @@
 <template>
   <div class="login-container">
     <div class="image-side">
-      <!-- Aquí puedes poner tu imagen -->
       <img src="C:\Users\maria\OneDrive\Desktop\gestion\proyecto\src\assets\fondo_login.jpg" alt="Login Image" class="login-image" />
     </div>
 
