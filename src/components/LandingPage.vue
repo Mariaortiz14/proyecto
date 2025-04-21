@@ -97,7 +97,7 @@ export default {
   methods: {
     async fetchEvents() {
       try {
-        const response = await axios.get("http://localhost:8000/events/", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/`, {
           params: { limit: 50 },
         });
         this.favoriteEvents = response.data;
@@ -123,6 +123,7 @@ export default {
   },
 };
 </script>
+
 
 <style >
 .landing-container {
