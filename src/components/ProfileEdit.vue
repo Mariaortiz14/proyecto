@@ -7,27 +7,32 @@
         <section class="editprofile-section">
           <h2>Información Personal</h2>
 
+          <!-- Input de nombre -->
           <div class="editprofile-group">
             <label for="name">Nombre</label>
             <input type="text" id="name" v-model="profile.name" />
           </div>
 
+          <!-- Input de apellido -->
           <div class="editprofile-group">
             <label for="surname">Apellido</label>
             <input type="text" id="surname" v-model="profile.surname" />
           </div>
 
+          <!-- Input de correo electrónico -->
           <div class="editprofile-group">
             <label for="email">Correo Electrónico</label>
             <input type="email" id="email" v-model="profile.email" />
           </div>
 
+          <!-- Input de teléfono -->
           <div class="editprofile-group">
             <label for="phone">Teléfono</label>
             <input type="text" id="phone" v-model="profile.phone" />
           </div>
         </section>
 
+        <!-- Botones de guardar y cancelar -->
         <div class="editprofile-actions">
           <button type="submit" class="editprofile-btn-primary">Guardar Cambios</button>
           <button type="button" class="editprofile-btn-secondary" @click="resetForm">Cancelar</button>
@@ -36,7 +41,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import Swal from "sweetalert2";
@@ -57,6 +61,7 @@ export default {
     this.loadUserProfile();
   },
   methods: {
+    // Cargar la información del perfil del usuario desde la API
     async loadUserProfile() {
       const userId = localStorage.getItem("user_id");
       if (!userId) {
@@ -81,8 +86,9 @@ export default {
       }
     },
 
+    // Confirmar la edición del perfil y pedir la contraseña del usuario
     async confirmAndSubmit() {
-      // Validar que no estén vacíos
+      // Validación de campos vacíos
       if (
         !this.profile.name.trim() &&
         !this.profile.surname.trim() &&
@@ -93,7 +99,7 @@ export default {
         return;
       }
 
-      // SweetAlert para ingresar la contraseña
+      // Solicitar contraseña actual para confirmar los cambios
       const { value: password } = await Swal.fire({
         title: "Confirmación de cambios",
         text: "Ingresa tu contraseña actual para confirmar los cambios",
@@ -118,6 +124,7 @@ export default {
       this.submitForm(password);
     },
 
+    // Enviar los cambios del perfil al servidor
     async submitForm(currentPassword) {
       const userId = localStorage.getItem("user_id");
 
@@ -150,12 +157,14 @@ export default {
       }
     },
 
+    // Resetear el formulario con los valores actuales del perfil
     resetForm() {
       this.loadUserProfile();
     }
   }
 };
 </script>
+
 
 <style>
 .editprofile-fondo {
