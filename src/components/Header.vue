@@ -4,7 +4,7 @@
       <!-- Logo -->
       <div class="logo-container">
         <router-link to="/landingPage">
-          <img src="C:\Users\maria\OneDrive\Desktop\gestion\proyecto\src\assets\image.png" alt="Happenit Logo" class="logo" />
+          <img src="src\assets\image.png" alt="Happenit Logo" class="logo" />
         </router-link>
       </div>
 
