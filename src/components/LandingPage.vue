@@ -133,7 +133,6 @@ export default {
   background: linear-gradient(90deg, rgba(0,0,0,1) 22%, rgba(44,20,37,1) 38%, rgba(44,20,37,1) 39%, rgba(199,88,165,1) 60%, rgba(255,0,125,1) 82%);
 }
 
-/* HERO SECTION */
 .hero-section {
   display: flex;
   align-items: stretch;
@@ -187,7 +186,7 @@ h1{
   color:#fff
 }
 
-/* CATEGORÍAS */
+
 .categories h2 {
   font-size: 2.5rem;
   margin-bottom: 20px;
@@ -229,7 +228,7 @@ h1{
   color: #444;
 }
 
-/* EVENTOS */
+
 .favorites h2 {
   font-size: 2rem;
   color: #fffefe;
@@ -251,7 +250,7 @@ h1{
   justify-content: center;
 }
 
-/* TARJETAS ESTILO WALLET */
+
 .wallet-card {
   background: rgb(240, 234, 234);
   border-radius: 1rem;
@@ -336,6 +335,54 @@ h1{
   color: #777;
   text-align: center;
   margin-top: 2rem;
+}
+
+
+@media (max-width: 1024px) { 
+  .wallet-card {
+    width: 45%;
+  }
+}
+
+@media (max-width: 768px) { 
+  .hero-section {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .hero-text h2 {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .hero-image {
+    height: 250px;
+    object-fit: cover;
+  }
+
+  .category-card {
+    width: 45%;
+  }
+
+  .wallet-card {
+    width: 80%;
+  }
+}
+
+@media (max-width: 480px) { 
+  .category-card,
+  .wallet-card {
+    width: 100%;
+  }
+
+  .wallet-button {
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+  }
+
+  .caption {
+    font-size: 0.75rem;
+  }
 }
 </style>
 

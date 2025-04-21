@@ -113,7 +113,6 @@ export default {
   align-items: center;
 }
 
-/* Aquí van los estilos que me compartiste */
 .form {
   display: flex;
   flex-direction: column;
