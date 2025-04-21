@@ -57,7 +57,7 @@ export default {
   methods: {
     async fetchComments() {
       try {
-        const response = await axios.get(`http://localhost:8000/comments/event/${this.eventId}`)
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/comments/event/${this.eventId}`)
         this.comments = response.data
       } catch (error) {
         console.error('Error al cargar los comentarios:', error)
@@ -65,7 +65,7 @@ export default {
     },
     async fetchEventOwner() {
       try {
-        const response = await axios.get(`http://localhost:8000/events/${this.eventId}`)
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/${this.eventId}`)
         this.eventOwnerId = response.data.user.id
       } catch (error) {
         console.error('Error al obtener el propietario del evento:', error)
@@ -79,7 +79,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         await axios.post(
-          'http://localhost:8000/comments/',
+          `${import.meta.env.VITE_API_URL}/comments/`,
           {
             event_id: this.eventId,
             content: this.newComment
@@ -112,7 +112,7 @@ export default {
       if (confirm.isConfirmed) {
         try {
           const token = localStorage.getItem('token');
-          await axios.delete(`http://localhost:8000/comments/${commentId}`, {
+          await axios.delete(`${import.meta.env.VITE_API_URL}/comments/${commentId}`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -136,7 +136,7 @@ export default {
           if (!newContent.trim()) return Swal.showValidationMessage('El comentario no puede estar vacío')
           try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8000/comments/${comment.id}`, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/comments/${comment.id}`, {
               content: newContent
             }, {
               headers: {
