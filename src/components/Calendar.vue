@@ -75,7 +75,7 @@ export default {
       }
 
       try {
-        const response = await axios.get("http://localhost:8000/events/");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/`);
         const events = response.data;
 
         for (const event of events) {
@@ -142,7 +142,6 @@ export default {
   },
 };
 </script>
-
 
 <style>
 .calendar-fondo {
