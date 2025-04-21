@@ -7,7 +7,8 @@
         </div>
       </div>
       <div class="hero-image-container">
-        <img src="C:\Users\maria\OneDrive\Desktop\gestion\proyecto\src\assets\Concierto.png" alt="Concierto" class="hero-image" />
+        <!-- Usamos la variable heroImage para las imágenes dinámicas -->
+        <img :src="heroImage" alt="Concierto" class="hero-image" />
         <div class="caption">Superorganism en Great American Music Hall</div>
       </div>
     </section>
@@ -70,7 +71,7 @@ import musica from "@/assets/carrera-de-relevos.gif";
 import cantar from "@/assets/festival.gif";
 import baile from "@/assets/musica.gif";
 import teatro from "@/assets/musica.gif";
-import conciertoHero from "@/assets/Concierto.png";
+import conciertoHero from "@/assets/Concierto.png"; // Correcta importación para la imagen del héroe
 
 export default {
   name: "LandingPage",
@@ -87,7 +88,7 @@ export default {
         { id: 6, name: "Teatro", image: teatro },
       ],
       favoriteEvents: [],
-      heroImage: conciertoHero,
+      heroImage: conciertoHero, // Usar la variable heroImage para la imagen
     };
   },
   mounted() {
@@ -122,7 +123,6 @@ export default {
   },
 };
 </script>
-
 
 <style >
 .landing-container {
