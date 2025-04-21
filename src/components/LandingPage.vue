@@ -108,7 +108,7 @@ export default {
     },
     async filterByCategory(categoryName) {
       try {
-        const response = await axios.get("http://localhost:8000/events/", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/`, {
           params: { category: categoryName },
         });
         this.favoriteEvents = response.data;
