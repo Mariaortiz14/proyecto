@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="image-side">
-      <img src="C:\Users\maria\OneDrive\Desktop\gestion\proyecto\src\assets\fondo_login.jpg" alt="Login Image" class="login-image" />
+      <img :src="fondoLogin" alt="Login Image" class="login-image" />
     </div>
 
     <div class="form-side">
@@ -47,6 +47,7 @@
 <script>
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
+import fondoLogin from '@/assets/fondo_login.jpg';
 
 export default {
   name: 'Login',
@@ -55,7 +56,8 @@ export default {
       username: '',
       password: '',
       showPassword: false,
-      errorMessage: ''
+      errorMessage: '',
+      fondoLogin
     };
   },
   methods: {
@@ -85,7 +87,6 @@ export default {
   }
 };
 </script>
-
 
 <style>
 .login-container {
