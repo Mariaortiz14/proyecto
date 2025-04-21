@@ -4,7 +4,7 @@
       <!-- Logo -->
       <div class="logo-container">
         <router-link to="/landingPage">
-          <img src="src\assets\image.png" alt="Happenit Logo" class="logo" />
+          <img :src="logo" alt="Happenit Logo" class="logo" />
         </router-link>
       </div>
 
@@ -42,12 +42,15 @@
 </template>
 
 <script>
+import logo from '@/assets/image.png'
+
 export default {
   name: 'Header',
   data() {
     return {
       isLoggedIn: false,
-      searchQuery: ''
+      searchQuery: '',
+      logo
     };
   },
   mounted() {
@@ -68,6 +71,7 @@ export default {
   }
 };
 </script>
+
 
 <style>
 .main-header {
