@@ -91,7 +91,7 @@ export default {
       formData.append("category", this.category);
 
       try {
-        await axios.post("http://localhost:8000/events/", formData, {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/events/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
@@ -133,6 +133,7 @@ export default {
   },
 };
 </script>
+
 
 <style>
 .fondo {

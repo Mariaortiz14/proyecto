@@ -42,7 +42,7 @@ export default {
     async loadEvent() {
       const eventId = this.$route.params.id
       try {
-        const response = await axios.get(`http://localhost:8000/events/${eventId}`)
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/${eventId}`)
         this.event = response.data
 
         const currentUserId = parseInt(localStorage.getItem('user_id'))
@@ -66,7 +66,7 @@ export default {
         if (result.isConfirmed) {
           try {
             const token = localStorage.getItem('token')
-            await axios.delete(`http://localhost:8000/events/${this.event.id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/events/${this.event.id}`, {
               headers: {
                 Authorization: `Bearer ${token}`
               }
@@ -86,8 +86,6 @@ export default {
   }
 }
 </script>
-
-
 
 <style>
 .btn-edit,
