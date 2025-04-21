@@ -57,7 +57,7 @@ export default {
   }
 
   try {
-    const url = `${import.meta.env.VITE_API_URL}/users/${userId}/events`;
+    const url = `${import.meta.env.VITE_API_URL}/events/user/${userId}`;
     console.log("URL de solicitud:", url); 
     console.log(import.meta.env.VITE_API_URL)
 
