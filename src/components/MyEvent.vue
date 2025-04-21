@@ -49,25 +49,28 @@ export default {
   },
   methods: {
     async loadUserEvents() {
-      const userId = localStorage.getItem("user_id");
-      const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("user_id");
+  const token = localStorage.getItem("token");
 
-      if (!userId || !token) {
-        return Swal.fire("Error", "Usuario no autenticado", "error");
-      }
+  if (!userId || !token) {
+    return Swal.fire("Error", "Usuario no autenticado", "error");
+  }
 
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/${userId}/events`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        this.events = response.data;
-      } catch (error) {
-        console.error("Error al cargar los eventos:", error);
-        Swal.fire("Error", "Hubo un error al cargar tus eventos.", "error");
-      }
-    },
+  try {
+    const url = `${import.meta.env.VITE_API_URL}/users/${userId}/events`;
+    console.log("URL de solicitud:", url);  // Verificar la URL generada
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    this.events = response.data;
+  } catch (error) {
+    console.error("Error al cargar los eventos:", error);
+    Swal.fire("Error", "Hubo un error al cargar tus eventos.", "error");
+  }
+  },
 
     formatDate(date) {
       const eventDate = new Date(date);
