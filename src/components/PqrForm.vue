@@ -71,7 +71,7 @@ export default {
       this.loading = true;
 
       try {
-        const response = await fetch("http://localhost:8000/pqr/", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/pqr/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -107,6 +107,7 @@ export default {
   }
 };
 </script>
+
 
 <style>
 .fondo {
