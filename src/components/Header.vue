@@ -1,92 +1,76 @@
 <template>
-  <div class="login-container">
-    <div class="image-side">
-      <img :src="fondoLogin" alt="Login Image" class="login-image" />
+  <header class="main-header">
+    <div class="header-content">
+      <!-- Logo -->
+      <div class="logo-container">
+        <router-link to="/landingPage">
+          <img :src="logo" alt="Happenit Logo" class="logo" />
+        </router-link>
+      </div>
+
+      <!-- Buscador -->
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Buscar eventos..."
+          @input="emitSearch"
+        />
+        <i class="fas fa-map-marker-alt location-icon"></i>
+        <span class="location-label">Bogotá</span>
+        <button class="search-btn" @click="emitSearch">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+
+      <!-- Enlaces de navegación -->
+      <nav class="nav-links">
+        <ul>
+          <li><router-link to="/landingPage">Inicio</router-link></li>
+          <li><router-link to="/edit-profile">Ver Perfil</router-link></li>
+          <li><router-link to="/my-events">Mis Eventos</router-link></li>
+          <li><router-link to="/calendar">Calendario</router-link></li>
+          <li><router-link to="/pqr">PQR</router-link></li>
+          <li v-if="!isLoggedIn"><router-link to="/login">Iniciar sesión</router-link></li>
+          <li v-if="!isLoggedIn"><router-link to="/register">Registrarse</router-link></li>
+          <li v-if="isLoggedIn"><a @click="logout">Cerrar sesión</a></li>
+        </ul>
+      </nav>
     </div>
-
-    <div class="form-side">
-      <form class="form">
-        <p id="heading">Acceso</p>
-
-        <div class="field">
-          <i class="fas fa-user input-icon"></i>
-          <input
-            v-model="username"
-            type="text"
-            class="input-field"
-            placeholder="Nombre de usuario"
-          />
-        </div>
-
-        <div class="field">
-          <i class="fas fa-lock input-icon"></i>
-          <input
-            v-model="password"
-            type="password"
-            class="input-field"
-            placeholder="Contraseña"
-          />
-        </div>
-
-        <div class="btn">
-          <button class="button1" @click.prevent="loginUser">Acceso</button>
-          <button class="button2" type="button">Inscribirse</button>
-        </div>
-        <button class="button3" type="button">¿Olvidaste tu contraseña?</button>
-
-        <p v-if="errorMessage" style="color: red; margin-top: 10px;">{{ errorMessage }}</p>
-      </form>
-    </div>
-  </div>
+  </header>
 </template>
 
 <script>
-import axios from 'axios'
-import { useUserStore } from '@/stores/user'
-import fondoLogin from '@/assets/fondo_login.jpg'
+import logo from '@/assets/image.png'
 
 export default {
-  name: 'Login',
+  name: 'Header',
   data() {
     return {
-      username: '',
-      password: '',
-      showPassword: false,
-      errorMessage: '',
-      fondoLogin
-    }
+      isLoggedIn: false,
+      searchQuery: '',
+      logo
+    };
+  },
+  mounted() {
+    this.checkLoginStatus();
   },
   methods: {
-    async loginUser() {
-      try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/users/login`,
-          {
-            username: this.username,
-            password: this.password
-          }
-        )
-
-        if (response.data.message === 'Inicio de sesión exitoso') {
-          const { user_id, name, token } = response.data
-
-          localStorage.setItem('user_id', user_id)
-          localStorage.setItem('userName', name)
-          localStorage.setItem('token', token)
-
-          const userStore = useUserStore()
-          userStore.login(name, token)
-
-          this.$router.push('/landingPage')
-        }
-      } catch (error) {
-        this.errorMessage = 'Usuario o contraseña incorrectos'
-      }
+    checkLoginStatus() {
+      this.isLoggedIn = !!localStorage.getItem('token');
+    },
+    logout() {
+      localStorage.removeItem('token');
+      this.isLoggedIn = false;
+      this.$router.push('/landingPage');
+    },
+    emitSearch() {
+      this.$emit('search', this.searchQuery);
     }
   }
-}
+};
 </script>
-
 <style>
 .main-header {
   background-color: #121212;

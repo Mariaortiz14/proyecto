@@ -87,7 +87,6 @@ export default {
 }
 </script>
 
-
 <style>
 .login-container {
   display: flex;
