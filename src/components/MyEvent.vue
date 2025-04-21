@@ -41,34 +41,36 @@ export default {
   name: "MyEvents",
   data() {
     return {
-      events: [],
+      events: [], // Lista de eventos
     };
   },
   mounted() {
-    this.loadUserEvents();
+    this.loadUserEvents(); // Cargar los eventos del usuario cuando el componente se monte
   },
   methods: {
+    // Función para cargar los eventos del usuario
     async loadUserEvents() {
       const userId = localStorage.getItem("user_id");
       const token = localStorage.getItem("token");
 
       if (!userId || !token) {
-        return Swal.fire("Error", "Usuario no autenticado", "error");
+        return Swal.fire("Error", "Usuario no autenticado", "error"); // Mostrar error si no está autenticado
       }
 
       try {
-        const response = await axios.get(`http://localhost:8000/users/${userId}/events/`, {
+        const response = await axios.get(`${process.env.VUE_APP_API_URL}/users/${userId}/events/`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Incluir token en la cabecera
           },
         });
-        this.events = response.data;
+        this.events = response.data; // Asignar los eventos al arreglo
       } catch (error) {
         console.error("Error al cargar los eventos:", error);
-        Swal.fire("Error", "Hubo un error al cargar tus eventos.", "error");
+        Swal.fire("Error", "Hubo un error al cargar tus eventos.", "error"); // Mostrar mensaje de error
       }
     },
 
+    // Función para formatear la fecha del evento
     formatDate(date) {
       const eventDate = new Date(date);
       return eventDate.toLocaleString("es-ES", {
@@ -81,14 +83,16 @@ export default {
       });
     },
 
+    // Función para redirigir al formulario de edición de evento
     editEvent(id) {
-      this.$router.push(`/events/edit/${id}`);
+      this.$router.push(`/events/edit/${id}`); // Redirigir a la página de edición
     },
 
+    // Función para confirmar la eliminación de un evento
     async confirmDelete(id) {
       const token = localStorage.getItem("token");
       if (!token) {
-        return Swal.fire("Error", "No estás autenticado", "error");
+        return Swal.fire("Error", "No estás autenticado", "error"); // Si no está autenticado
       }
 
       const result = await Swal.fire({
@@ -104,17 +108,18 @@ export default {
 
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:8000/events/${id}`, {
+          // Eliminar el evento
+          await axios.delete(`${process.env.VUE_APP_API_URL}/events/${id}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
 
           Swal.fire("Eliminado", "El evento ha sido eliminado con éxito.", "success");
-          this.loadUserEvents(); // recargar la lista
+          this.loadUserEvents(); // Recargar los eventos
         } catch (error) {
           console.error("Error al eliminar el evento:", error);
-          Swal.fire("Error", "No se pudo eliminar el evento", "error");
+          Swal.fire("Error", "No se pudo eliminar el evento", "error"); // Mostrar mensaje de error
         }
       }
     },
