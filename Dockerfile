@@ -17,8 +17,8 @@ FROM nginx:stable-alpine
 # Copia los archivos de construcción a Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copia un archivo de configuración de Nginx opcional si lo necesitas
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copia un archivo de configuración de Nginx personalizado
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
