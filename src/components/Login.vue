@@ -9,9 +9,7 @@
         <p id="heading">Acceso</p>
 
         <div class="field">
-          <svg class="input-icon" viewBox="0 0 20 20">
-            <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2..." />
-          </svg>
+          <i class="fas fa-user input-icon"></i>
           <input
             v-model="username"
             type="text"
@@ -21,9 +19,7 @@
         </div>
 
         <div class="field">
-          <svg class="input-icon" viewBox="0 0 20 20">
-            <path d="M10 2a4 4 0 00-4 4v2H5a2..." />
-          </svg>
+          <i class="fas fa-lock input-icon"></i>
           <input
             v-model="password"
             type="password"
@@ -36,7 +32,7 @@
           <button class="button1" @click.prevent="loginUser">Acceso</button>
           <button class="button2" type="button">Inscribirse</button>
         </div>
-        <button class="button3" type="button">Has olvidado tu contraseña</button>
+        <button class="button3" type="button">¿Olvidaste tu contraseña?</button>
 
         <p v-if="errorMessage" style="color: red; margin-top: 10px;">{{ errorMessage }}</p>
       </form>
@@ -45,9 +41,9 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { useUserStore } from '@/stores/user';
-import fondoLogin from '@/assets/fondo_login.jpg';
+import axios from 'axios'
+import { useUserStore } from '@/stores/user'
+import fondoLogin from '@/assets/fondo_login.jpg'
 
 export default {
   name: 'Login',
@@ -58,35 +54,39 @@ export default {
       showPassword: false,
       errorMessage: '',
       fondoLogin
-    };
+    }
   },
   methods: {
     async loginUser() {
       try {
-        const response = await axios.post('http://localhost:8000/users/login', {
-          username: this.username,
-          password: this.password
-        });
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/users/login`,
+          {
+            username: this.username,
+            password: this.password
+          }
+        )
 
         if (response.data.message === 'Inicio de sesión exitoso') {
-          const { user_id, name, token } = response.data;
+          const { user_id, name, token } = response.data
 
-          localStorage.setItem('user_id', user_id);
-          localStorage.setItem('userName', name);
-          localStorage.setItem('token', token);
+          localStorage.setItem('user_id', user_id)
+          localStorage.setItem('userName', name)
+          localStorage.setItem('token', token)
 
-          const userStore = useUserStore();
-          userStore.login(name, token);
+          const userStore = useUserStore()
+          userStore.login(name, token)
 
-          this.$router.push('/landingPage');
+          this.$router.push('/landingPage')
         }
       } catch (error) {
-        this.errorMessage = 'Usuario o contraseña incorrectos';
+        this.errorMessage = 'Usuario o contraseña incorrectos'
       }
     }
   }
-};
+}
 </script>
+
 
 <style>
 .login-container {
